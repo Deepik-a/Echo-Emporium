@@ -8,7 +8,7 @@ async function isUser (req,res,next){
         
         if(req.session.user){
             const user = await userSchema.findById(req.session.user);
-            if(user.isActive){
+            if(user.isBlocked){
                 next();
             }else{
                 req.session.user ='';

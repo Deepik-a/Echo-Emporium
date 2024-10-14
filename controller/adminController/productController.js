@@ -25,66 +25,17 @@ const getProduct = async (req, res) => {
     }
 };
 
-//--------------------------------------------- Add a new product ---------------------------
-
-
-// const addProduct = async (req, res) => {
-//     try {
-//         const imgArray = [];
-//         const { name, price, description, stock, category } = req.body;
-
-//         // Check if files are uploaded (multer stores uploaded files in req.files)
-//         if (!req.files || req.files.length === 0) {
-//             console.error('No images received or invalid file type');
-//             return res.status(400).json({ success: false, message: 'No images received or invalid file type' });
-//         }
-
-//         console.log(req.body); // Logs text fields
-//         console.log(req.files);
-
-//         // Process the uploaded images
-//         req.files.forEach(file => {
-//             imgArray.push(file.filename); // Store the filename for further use (e.g., save to database)
-//         });
-
-//         // Find the category by name
-//         const categoryName = await categorySchema.findOne({ name: category });
-//         if (!categoryName) {
-//             return res.status(400).json({ success: false, message: 'Category not found' });
-//         }
-
-//         // Create the new product
-//         const product = new productSchema({
-//             name,
-//             price,
-//             description,
-//             stock,
-//             category: categoryName._id, // Save category ID
-//             images: imgArray // Save the array of uploaded image filenames
-//         });
-
-//         // Save the product to the database
-//         await product.save();
-
-//         // Send success response
-//         return res.status(200).json({ success: true, message: 'Product added successfully', product });
-//     } catch (error) {
-//         console.error('Error adding product:', error);
-//         // Send error response
-//         return res.status(500).json({ success: false, message: 'Error adding product', error: error.message });
-//     }
-// };
-
 
 const addProduct= async (req, res) => {
     uploadProduct(req, res, async function (err) {
+        console.log("addProduct")
         if (err) {
             return res.status(400).json({ error: 'Error uploading files: ' + err.message }) ; 
         }
         
         try {
            
-            const { name, price, description, stock, category } = req.body;
+            const { name, price, description, stock, category,discount } = req.body;
 
               
             console.log("req.files",req.files)
@@ -101,6 +52,12 @@ const addProduct= async (req, res) => {
                     if (!categoryName) {
                         return res.status(400).json({ success: false, message: 'Category not found' });
                     }
+                        // Calculate the final price after applying the discount
+            let finalPrice = price;
+            if (discount) {
+                // Assuming 'discount' is a percentage, calculate the final price
+                finalPrice = price - (price * discount / 100);
+            }
             
             const product = new productSchema({
                             name,
@@ -108,7 +65,10 @@ const addProduct= async (req, res) => {
                             description,
                             stock,
                             category: categoryName._id, // Save category ID
-                            imgArray: imageUrls // Save the array of uploaded image filenames
+                            imgArray: imageUrls, // Save the array of uploaded image filenames
+                            discount: discount || 0 ,
+                            finalPrice
+                            // Save the discount amount (or 0 if no discount)
                         });
                 
              
@@ -128,15 +88,17 @@ const addProduct= async (req, res) => {
 
 
 const editProduct = async (req, res) => {
-
+    uploadProduct(req, res, async function (err) {
     try {
+       
         const { id } = req.params;
         console.log("id",id )
         
-        const { name, stock, price, description, category, isActive } = req.body;
+        const { name, stock, price, description, category, isActive ,discount} = req.body;
 
         console.log("Request body:", req.body);
 
+     
         // Find the category by its name
         const categoryName = await categorySchema.find({});
 
@@ -144,6 +106,14 @@ const editProduct = async (req, res) => {
             return res.status(404).json({ message: 'Category not found' });
         }
 
+
+                       // Calculate the final price after applying the discount
+                       let finalPrice = price;
+                       if (discount) {
+                           // Assuming 'discount' is a percentage, calculate the final price
+                           finalPrice = price - (price * discount / 100);
+                       }
+                       
         // Find product by ID and update it
         const updatedProduct = await productSchema.findByIdAndUpdate(
             id,
@@ -153,7 +123,10 @@ const editProduct = async (req, res) => {
                 price,
                 category: categoryName._id,
                 description,
-                isActive
+                isActive,
+                discount: discount || 0 ,
+                finalPrice,
+
             },
             { new: true }
         );
@@ -172,6 +145,7 @@ const editProduct = async (req, res) => {
         console.error('Error updating product:', error);
         res.redirect('/admin/editProduct?error=true');
     }
+})
 };
 
 
@@ -179,6 +153,7 @@ const editProduct = async (req, res) => {
 //--------------------------------------------- Get Edit Product Page ---------------------------
 const geteditProduct = async (req, res) => {
     try {
+        
         // Fetch all products and populate the category field
         const product = await productSchema.find({}).populate('category', 'name'); // Populate 'category' with only 'name'
         

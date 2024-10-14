@@ -1,0 +1,189 @@
+<%-include('navbar') %>
+
+    <style>
+        body{
+            background-color: rgb(214, 239, 216);
+        }
+        .order-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .order-image {
+            width: 100px;
+            height: auto;
+        }
+
+        .order-details {
+            margin-left: 20px;
+        }
+
+        .delivery-status {
+            font-size: 0.9rem;
+          
+        }
+
+        .no-more-results {
+            text-align: center;
+            font-weight: bold;
+            color:rgb(26, 83, 25);
+            cursor: pointer;
+        }
+
+        .search-bar {
+            margin: 20px 0;
+        }
+    </style>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Search Bar -->
+            <div class="input-group search-bar">
+                <input type="text" class="form-control" placeholder="Search your orders here">
+                <div class="input-group-append">
+                    <button class="btn btn-success" type="button">Search Orders</button>
+                </div>
+            </div>
+
+            <!-- Order Card -->
+            <% orderDetails.forEach(order => { %>
+                <div class="order-card d-flex align-items-start">
+                    <% order.items.forEach(item => { %>
+                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" class="order-image">
+                    <div class="order-details">
+                        <h5><%= item.productId.name %></h5>
+                        <p>$<%= (item.productPrice * item.productCount).toFixed(2) %></p>
+                        
+                      <!-- Delivery Status Section -->
+<div id="delivery-status-<%= order._id %>" class="delivery-status">
+  <% if (order.status === 'Cancelled') { %>
+      <p><span class="text-danger">●</span> Cancelled</p>
+      <p>Your order has been cancelled.</p>
+  <% } else if (order.status === 'Delivered') { %>
+      <p><span class="text-success">●</span> Delivered on <%= order.deliveryDate %></p>
+      <p>Your item has been delivered.</p>
+  <% } else if (order.status === 'Pending') { %>
+      <p><span class="text-warning">●</span> Pending</p>
+      <p>Your order is currently being processed.</p>
+  <% } else { %>
+      <p><span class="text-info">●</span> Status: <%= order.status %></p>
+      <p>Your order status is <%= order.status %>.</p>
+  <% } %>
+</div>
+
+                        
+                        <a href="#" class="btn btn-link text-success">★ Rate & Review Product</a>
+
+                        <!-- Action Buttons -->
+                        <div class="order-actions mt-3">
+                            <!-- Track Order Button -->
+                            <a href="/track-order/<%= order._id %>" class="btn btn-primary btn-sm">Track Order</a>
+                            <!-- Cancel Order Button -->
+                            <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#cancelModal" data-order-id="<%= order._id %>">Cancel Order</a>
+
+                     
+                            <!-- Prepay Button -->
+                            <a href="/prepay/<%= order._id %>" class="btn btn-warning btn-sm">Prepay</a>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            <% }) %>
+
+            <!-- No More Results Message -->
+            <div class="no-more-results">
+                No More Results To Display
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cancel Order Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="cancelOrderForm">
+          <div class="form-group">
+            <label for="cancelReason">Reason for cancelling the order:</label>
+            <textarea class="form-control" id="cancelReason" rows="3" required></textarea>
+          </div>
+          <input type="hidden" id="orderId">
+          <button type="submit" class="btn btn-danger">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include SweetAlert2 Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  // When the Cancel Order button is clicked, open the modal and set the order ID
+  $('#cancelModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var orderId = button.data('order-id'); // Extract order ID from data-* attribute
+    var modal = $(this);
+    modal.find('#orderId').val(orderId); // Set the hidden input value
+  });
+
+  // Submit cancel order form and show SweetAlert
+  $('#cancelOrderForm').on('submit', function (e) {
+    e.preventDefault();
+    
+    var orderId = $('#orderId').val();
+    var cancelReason = $('#cancelReason').val();
+
+    if (cancelReason.trim() === "") {
+      Swal.fire('Error', 'Please provide a reason for cancellation.', 'error');
+      return;
+    }
+
+    // Send AJAX request to cancel the order
+    $.ajax({
+      url: '/cancelOrder/' + orderId,
+      method: 'GET', // Change to GET since your route is set to GET
+      success: function(response) {
+        // Update delivery status after successful cancellation
+        $('#delivery-status-' + orderId).html(`
+          <p><span>●</span> Cancelled</p>
+          <p>Your order has been cancelled</p>
+        `);
+
+        // Show SweetAlert after successful cancellation
+        Swal.fire({
+          icon: 'success',
+          title: 'Order Cancelled',
+          text: 'Your order has been successfully cancelled.',
+          showConfirmButton: true,
+        }).then(() => {
+          // Close the modal after showing SweetAlert
+          $('#cancelModal').modal('hide');
+        });
+      },
+      error: function(xhr) {
+        // Handle error case
+        Swal.fire('Error', 'There was an issue cancelling your order. Please try again.', 'error');
+      }
+    });
+  });
+</script>
+
+
+<%- include('footer') %>

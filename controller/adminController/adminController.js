@@ -10,16 +10,16 @@ const admin=(req,res)=>{
 
 
 
-const adminlogin=(req,res)=>{
-    try{
-if(req.session.admin){
-    res.redirect('/admin/home')
-}else
-res.redirect('/admin/login')
-    }catch(error){
-        console.log(`error from admin login ${error}`)    
-    }
-}
+// const adminlogin=(req,res)=>{
+//     try{
+// if(req.session.admin){
+//     res.redirect('/admin/home')
+// }else
+// res.redirect('/admin/login')
+//     }catch(error){
+//         console.log(`error from admin login ${error}`)    
+//     }
+// }
 
 const blockUser = async (req, res) => {
     try {
@@ -60,6 +60,7 @@ const unblockUser = async (req, res) => {
 const adminloginpost=async(req,res)=>{
     try{
         if(req.body.email===process.env.ADMIN_EMAIL && req.body.password===process.env.ADMIN_PASSWORD)
+            req.session.admin=req.body.email
   res.render("admin/dashboard")
     } catch (error) {
         console.log(`error from login post ${error}`)
@@ -98,7 +99,7 @@ const getCategories = async (req, res) => {
 module.exports={
     admin,
     listuser,
-    adminlogin,
+    // adminlogin,
     unblockUser,
     blockUser,
     adminloginpost,

@@ -73,11 +73,11 @@
             <a href="/admin/users" class="nav-item nav-link">
               <i class="fa fa-table me-2"></i>Customers
             </a>
-            <a href="chart.html" class="nav-item nav-link">
+            <a href="/admin/coupons" class="nav-item nav-link">
               <i class="fa fa-chart-bar me-2"></i>Coupons
             </a>
-            <a href="chart.html" class="nav-item nav-link">
-              <i class="fa fa-chart-bar me-2"></i>Offers
+            <a href="/admin/orders" class="nav-item nav-link">
+              <i class="fa fa-chart-bar me-2"></i>Orders
             </a>
             <a href="chart.html" class="nav-item nav-link">
               <i class="fa fa-chart-bar me-2"></i>Popups
@@ -139,6 +139,8 @@
           <th scope="col">Product Name</th>
           <th scope="col">Product Image</th>
           <th scope="col">Price</th>
+          <th scope="col">Discount</th>
+          <th scope="col">Final Price</th>
           <th scope="col">Stock</th>
           <th scope="col">Category</th>
           <th scope="col">Product Description</th>
@@ -153,12 +155,14 @@
             <td><%= product.name %></td>
             <td>
               <% if (product.imgArray && product.imgArray.length > 0) { %>
-                <img src="/<%= product.imgArray[0] %>" class="product-image" alt="Product Image" width="50">
+                <img src="<%= product.imgArray[0] %>" class="product-image" alt="Product Image"  width="50">
               <% } else { %>
                 <img src="https://via.placeholder.com/50" class="product-image" alt="No Image">
               <% } %>
             </td>
             <td><%= product.price %></td>
+            <td><%= product.discount %></td>
+            <td><%= product.finalPrice %></td>
             <td><%= product.stock %></td>
             <td>
               <% if (product.category) { %>
@@ -202,6 +206,10 @@
                                       <label for="price">Price</label>
                                       <input type="number" class="form-control" name="price" value="<%= product.price %>">
                                   </div>
+                                  <div class="form-group">
+                                    <label for="discount">Discount(%)</label>
+                                    <input type="number" class="form-control" id="discount" name="discount" value="<%= product.discount %>">
+                                </div>
                                   <div class="form-group">
                                       <label for="stock">Stock</label>
                                       <input type="number" class="form-control" name="stock" value="<%= product.stock %>">

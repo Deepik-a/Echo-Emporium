@@ -32,7 +32,6 @@ app.set('views',path.join(__dirname,'views'))
 
 //layout folder
 
-
 //-----------------------public static files -------------------
 
 app.use('/public',express.static(path.join(__dirname,'public')))
@@ -74,7 +73,7 @@ const port=process.env.PORT || 3000
 app.use('/',userRoutes)
 app.use('/admin',adminRoutes)
 // app.get('/',(req,res)=>{
-//   res.render("user/productsDetail")
+//   res.render("user/hi")
 // })
 
 

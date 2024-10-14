@@ -1,13 +1,13 @@
 
     <title><%= product.name %> - Product Details</title>
 
-    <!-- Include Navbar -->
     <%- include('navbar') %>
+
 
     <div class="container my-5">
         <div class="row">
+            <!-- Left Column: Product Images Carousel -->
             <div class="col-md-6">
-                <!-- Product Images Carousel -->
                 <div id="productCarousel<%= product._id %>" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         <% if (product.imgArray.length > 0) { %>
@@ -41,23 +41,64 @@
                 </div>
             </div>
     
-            <!-- Product Details -->
-            <div class="col-md-6">
-                <h1 class="text-success"><%= product.name %></h1>
-                <p><strong>Price:</strong> $<%= product.price %></p>
-                <p><strong>Stock:</strong> <%= product.stock %> units available</p>
-                <p><%= product.description %></p>
+            <!-- Right Column: Product Details -->
+            <div class="col-md-6 d-flex flex-column justify-content-center" style="padding-left: 30px;">
+                <div class="card-body text-left">
+                    <h5 class="card-title text-success"><%= product.name %></h5>
     
-                <div class="d-flex justify-content-start align-items-center">
-                    <form action="/cart/add/<%=product._id%>">
-                        <button type="submit" class="btn btn-success me-3">Add to Cart</button>
-                    </form>
-                    <a href="/categories/<%= categoryName %>" class="btn btn-outline-secondary">Back to Products</a>
+                    <!-- Price Section -->
+                    <div class="product-pricing d-flex align-items-center mb-3" style="gap: 15px;">
+    
+                        <% if (product.discount > 0) { %>
+                            <!-- Final Price after discount -->
+                            <p class="final-price" style="font-weight: bold; margin: 0;">
+                                $<%= product.finalPrice %>
+                            </p>
+    
+                            <!-- Original Price with strike-through -->
+                            <p class="original-price" style="text-decoration: line-through; margin: 0; color: #6c757d;">
+                                $<%= product.price %>
+                            </p>
+    
+                            <!-- Discount Badge -->
+                            <p class="discount" style="background-color: rgb(191, 220, 190); color: rgb(26, 83, 25); padding: 5px 10px; margin: 0; font-weight: bold;">
+                                <%= product.discount %>% OFF
+                            </p>
+                            <div class="text-warning mb-1 me-2">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                <span class="ms-1">
+                                  4.5
+                                </span>
+                              </div>
+    
+                        <% } else { %>
+                            <!-- Final Price when no discount is applied -->
+                            <p class="final-price" style="font-weight: bold; margin: 0;">
+                                $<%= product.finalPrice %>
+                            </p>
+                        <% } %>
+                    </div>
+    
+                    <!-- Stock and Description -->
+                    <p><strong>Stock:</strong> <%= product.stock %> units available</p>
+                    <p><%= product.description %></p>
+    
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center mt-3">
+                        <form action="/cart/add/<%=product._id%>/<%= product.finalPrice %>" method="POST" class="me-3">
+                            <button type="submit" class="btn btn-success">Add to Cart</button>
+                        </form>
+                        
+                        <a href="/categories/<%= categoryName %>" class="btn btn-outline-secondary">Back to Products</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
 
-    <!-- Include Footer -->
     <%- include('footer') %>

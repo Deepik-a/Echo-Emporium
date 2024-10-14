@@ -13,24 +13,31 @@
 
 
 <%-include('navbar') %>
-
-
 <div class="container mt-5">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <h2>Your Cart</h2>
 
-    <!-- Check if there's an alertMessage and display it as a Bootstrap alert -->
-    <% if (typeof alertMessage !== 'undefined') { %>
-        <div class="alert alert-warning" role="alert">
-            <%= alertMessage %>
-        </div>
-    <% } %>
+  <!-- Add SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- SweetAlert message for exceeding stock or out of stock -->
+<% if (typeof alertMessage !== 'undefined' && alertMessage !== '') { %>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '<%= alertMessage %>',
+        });
+    </script>
+<% } %>
+
 
     <!-- If there are items in the cart -->
     <% if (cart.items && cart.items.length > 0) { %>
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Image</th> <!-- New column for product image -->
+                    <th>Image</th>
                     <th>Product</th>
                     <th>Price</th>
                     <th>Quantity</th>
@@ -39,38 +46,41 @@
                 </tr>
             </thead>
             <tbody>
-            <% cart.items.forEach(item => { %>
-                <tr>
-                    <td>
-                        <!-- Display the product image, using the first image from the imgArray or default -->
-                        <img src="<%= item.productImage %>" alt="Product Image" style="width: 100px;" />
-                    </td>
-                    <td><%= item.productId.name %></td> <!-- Product name -->
-                    <td>$<%= item.productPrice %></td> <!-- Product price -->
-                    <td>
-                        <!-- Form to update quantity -->
-                        <form action="/cart/update/<%= item.productId._id %>" method="POST" style="display: inline;">
-                          <!-- Ensure that the quantity cannot exceed stock -->
-                          <input type="number" name="productCount" value="<%= item.productCount %>" min="1" max="<%= item.productId.stock %>" style="width: 50px;">
-                          <button type="submit" class="btn btn-primary btn-sm">Update</button>
-                        </form>
-                        <!-- Display stock message if quantity exceeds stock -->
-                        <% if (item.productCount >= item.productId.stock) { %>
-                            <p class="text-danger">Only <%= item.productId.stock %> left in stock</p>
-                        <% } %>
-                    </td>
-                    <td>$<%= item.productPrice * item.productCount %></td> <!-- Total for this product -->
-                    <td>
-                        <!-- Button to remove item from cart -->
-                        <a href="/cart/remove/<%=item.productId._id %>" class="btn btn-danger">Remove</a>
-                    </td>
-                </tr>
-            <% }); %>
+                <% cart.items.forEach(item => { %>
+                    <tr>
+                        <td>
+                            <!-- Display the product image -->
+                            <img src="<%= item.productImage %>" alt="Product Image" style="width: 100px;" />
+                        </td>
+                        <td><%= item.productId.name %></td> <!-- Product name -->
+                        <td>$<%= item.productPrice.toFixed(2) %></td> <!-- Product price -->
+                        <td>
+                            <!-- Buttons to update quantity -->
+                            <form class="update-quantity-form" data-product-id="<%= item.productId._id %>">
+                                <div class="input-group">
+                                    <!-- Decrement button -->
+                                    <button type="button" class="btn decrement-quantity" style="background-color: rgb(80, 141, 78);" data-action="decrement">-</button>
+
+                                    <!-- Display current quantity -->
+                                    <input type="text" name="productCount" value="<%= item.productCount %>" readonly class="form-control text-center product-count" style="width: 50px;" />
+
+                                    <!-- Increment button -->
+                                    <button type="button" class="btn increment-quantity" style="background-color: rgb(80, 141, 78);" data-action="increment">+</button>
+                                </div>
+                            </form>
+                        </td>
+                        <td>$<span class="item-total" data-price="<%= item.productPrice %>"><%= (item.productPrice * item.productCount).toFixed(2) %></span></td> <!-- Total for this product -->
+                        <td>
+                            <!-- Button to remove item from cart -->
+                            <a href="/cart/remove/<%= item.productId._id %>" class="btn btn-danger">Remove</a>
+                        </td>
+                    </tr>
+                <% }); %>
             </tbody>
         </table>
 
         <!-- Calculate and display the total cart price -->
-        <h4>Total Amount: $<%= cart.items.reduce((total, item) => total + (item.productPrice * item.productCount), 0) %></h4>
+        <h4 id="cart-total">Total Amount: $<%= cart.items.reduce((total, item) => total + (item.productPrice * item.productCount), 0).toFixed(2) %></h4>
 
         <!-- Button to proceed to checkout -->
         <a href="/checkout" class="btn btn-success">Proceed to Checkout</a>
@@ -81,6 +91,90 @@
     <% } %>
 </div>
 
+<script> 
+    // Handle increment and decrement button clicks
+    document.querySelectorAll('.increment-quantity, .decrement-quantity').forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('.update-quantity-form');
+            const productId = form.dataset.productId;
+            const action = this.dataset.action;
+            const productCountElement = form.querySelector('.product-count');
+            let productCount = parseInt(productCountElement.value);
+
+            // Update the product count based on the action
+            if (action === 'increment') {
+                productCount++;
+            } else if (action === 'decrement' && productCount > 1) {
+                productCount--;
+            }
+
+            // Update the quantity in the backend via AJAX
+            fetch(`/cart/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId, productCount })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response data:', data);  
+                if (data.success) {
+                    // Update the UI
+                    productCountElement.value = productCount;
+
+                    // Update the total price for the specific item
+                    const itemTotal = (data.updatedPrice).toFixed(2);
+                    form.closest('tr').querySelector('.item-total').textContent = itemTotal;
+
+                    // Update the total cart price
+                    document.getElementById('cart-total').textContent = `Total Amount: ${data.cartTotal.toFixed(2)}`;
+
+                    // Disable the decrement button if the product count is 1
+                    const decrementButton = form.querySelector('.decrement-quantity');
+                    if (productCount === 1) {
+                        decrementButton.setAttribute('disabled', true);
+                    } else {
+                        decrementButton.removeAttribute('disabled');
+                    }
+                } else {
+                    // Handle stock and quantity alerts
+                    if (data.message.includes('Maximum quantity')) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Limit Exceeded',
+                            text: data.message // Show the maximum quantity message
+                        });
+                    } else if (data.message.includes('Available quantity')) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Stock Exceeded',
+                            text: data.message // Show the stock exceeded message
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Could not update quantity'
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong!'
+                });
+            });
+        });
+    });
+</script> 
 
 
-  <%-include('footer') %>
+
+
+
+
+<%- include('footer') %>

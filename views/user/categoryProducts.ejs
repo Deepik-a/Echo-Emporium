@@ -39,25 +39,56 @@
                         <% } %>
                     </div>
 
-                    <!-- Display Product Details -->
-                    <div class="card-body text-center">
-                        <h5 class="card-title text-success"><%= product.name %></h5>
-                        <p class="card-text">Price: $<%= product.price %></p>
-                        <p class="card-text">Stock: <%= product.stock %> units</p>
-                        <p class="card-text"><%= product.description %></p>
-                        
-                        <!-- Check if Product is Active -->
-                        <% if (product.isActive) { %>
-                            <a href="/product/<%= product._id %>" class="btn btn-outline-success">
-                                Detailed View
-                            </a>
-                        <% } else { %>
-                            <a href="#" class="btn btn-outline-danger" onclick="return false;">
-                                Out of Stock
-                            </a>
-                        <% } %>
+                   <!-- Display Product Details -->
+<div class="card-body text-center">
+    <h5 class="card-title text-success"><%= product.name %></h5>
 
-                    </div>
+    <!-- Price Section -->
+    <div class="product-pricing d-flex justify-content-center align-items-center" style="gap: 15px;">
+
+        <% if (product.discount > 0) { %>
+
+            <!-- Final Price after discount -->
+            <p class="final-price" style="font-weight: bold; margin: 0;">
+                $<%= product.finalPrice %>
+            </p>
+
+            <!-- Original Price with strike-through -->
+            <p class="original-price" style="text-decoration: line-through; margin: 0; color: #6c757d;">
+                $<%= product.price %>
+            </p>
+
+            <!-- Discount Badge -->
+            <p class="discount" style="background-color: rgb(191, 220, 190); color: rgb(26, 83, 25); padding: 5px 10px; margin: 0; font-weight: bold;">
+                <%= product.discount %>% OFF
+            </p>
+
+        <% } else { %>
+            <!-- Final Price when no discount is applied -->
+            <p class="final-price" style="font-weight: bold; margin: 0;">
+                $<%= product.finalPrice %>
+            </p>
+        <% } %>
+
+    </div>
+
+    <!-- Stock and Description -->
+    <p class="card-text" style="margin-top: 10px;">Stock: <%= product.stock %> units</p>
+    <p class="card-text"><%= product.description %></p>
+
+    <!-- Check if Product is Active -->
+    <% if (product.stock > 0) { %>
+        <a href="/product/<%= product._id %>" class="btn btn-outline-success">
+            Detailed View
+        </a>
+    <% } else { %>
+        <a href="#" class="btn btn-outline-danger" onclick="return false;">
+            Out of Stock
+        </a>    
+    <% } %>
+    
+</div>
+
                 </div>
             </div>
         <% }) %>

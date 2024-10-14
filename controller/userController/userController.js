@@ -129,6 +129,7 @@ const login = async(req, res) => {
   const categories=await categorySchema.find({isDeleted:false})
 
   if (req.session.user) {
+         
     res.render('user/Landingpage',{categories}); // Redirect if the user is already logged in
   } else {
     res.render('user/login', { title: 'Login', user: req.session.user });
@@ -148,6 +149,9 @@ const loginpost = async (req, res) => {
     const categories=await categorySchema.find({isDeleted:false})
 
 
+
+    
+
     if (!user) {
       // If user is not found, redirect to login with an error flag
       return res.redirect('/login?error=userNotFound');
@@ -155,9 +159,12 @@ const loginpost = async (req, res) => {
 
     // Check if the user is blocked
     if (user.isBlocked) {
+      console.log("user.isBlocked",user.isBlocked) ;
       // If the user is blocked, redirect to login with the blocked error flag
       return res.redirect('/login?error=blocked');
     }
+
+    req.session.user=user
 
     // // Check if password matches (assuming bcrypt is used for hashing passwords)
     // const isMatch = await bcrypt.compare(password, user.password); 
@@ -166,19 +173,20 @@ const loginpost = async (req, res) => {
     //   return res.redirect('/login?error=invalidPassword');
     // }
 
-    // Set session for the logged-in user
-    req.session.user = user;
+    // // Set session for the logged-in user
+    // req.session.user = user;
     console.log('User found and session set:', req.session.user);
     
 
     // Redirect to the landing page after successful login
-    res.render('user/LandingPage',{categories});
+    res.render('user/LandingPage',{categories,user});
   } catch (error) {
     console.log(`Error during login: ${error}`);
     // Handle server errors with a generic error flag
     res.redirect('/login?error=serverError');
   }
 };
+
 
 const logout = (req, res) => {
   try {

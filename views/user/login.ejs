@@ -9,6 +9,19 @@
 </style>
 
 
+<!-- SweetAlert message for displaying login alerts -->
+<% if (typeof alertMessage !== 'undefined' && alertMessage !== '') { %>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '<%= alertMessage %>',
+        });
+    </script>
+<% } %>
+
+
+
     <section>
         <div class="container py-5 h-100">
             <div class="row d-flex align-items-center justify-content-center h-100">
@@ -31,7 +44,7 @@
 
                         <div class="d-flex justify-content-around align-items-center mb-4">
                           
-                            <a href="#!">Forgot password?</a>
+                            <a href="/forgotpassword">Forgot password?</a>
                         </div>
 
                         <!-- Submit button -->

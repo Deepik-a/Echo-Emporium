@@ -16,7 +16,7 @@ const itemSchema = new mongoose.Schema({
     },
     productImage: {
         type: String, // New field for storing the product image
-    }
+    },
 }, { _id: false, timestamps: true });
 
 const cartSchema = new mongoose.Schema({
@@ -36,4 +36,4 @@ const cartSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('cart', cartSchema);
+module.exports = mongoose.model('carts', cartSchema);

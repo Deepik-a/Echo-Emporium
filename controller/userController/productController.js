@@ -89,21 +89,21 @@ const sortAllproducts= async (req, res) => {
     let sortOption = {};
 
     switch (req.query.sort) {
-        case 'popularity':
-            sortOption = { popularity: -1 }; // Assuming you have a 'popularity' field in your products
-            break;
+        // case 'popularity':
+        //     sortOption = { popularity: -1 }; // Assuming you have a 'popularity' field in your products
+        //     break;
         case 'price_low_high':
             sortOption = { price: 1 }; // Sort by price ascending
             break;
         case 'price_high_low':
             sortOption = { price: -1 }; // Sort by price descending
             break;
-        case 'ratings':
-            sortOption = { averageRating: -1 }; // Sort by ratings descending
-            break;
-        case 'featured':
-            sortOption = { featured: -1 }; // Assuming you have a 'featured' field
-            break;
+       // case 'ratings':
+          //  sortOption = { averageRating: -1 }; // Sort by ratings descending
+          //  break;
+       // case 'featured':
+           // sortOption = { featured: -1 }; // Assuming you have a 'featured' field
+           // break;
         case 'new_arrivals':
             sortOption = { createdAt: -1 }; // Assuming 'createdAt' field stores product creation date
             break;

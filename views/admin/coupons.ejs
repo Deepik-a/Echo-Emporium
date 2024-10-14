@@ -1,0 +1,503 @@
+
+
+
+<style>
+    .category {
+        width: 85%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .search-container {
+        border-radius: 10px;
+        margin: 24px;
+        background: #2b7aaf;
+        width: 95%;
+    }
+
+    .coupon-action a {
+        text-decoration: none;
+    }
+
+    .modal-content {
+        background: #b4dfee;
+        color: #101feb;
+    }
+
+    .form-control {
+        background: #9cd6e7;
+        color: #2d08b4;
+        width: 100%;
+    }
+
+    .form-control::placeholder {
+        color: #1132d6;
+    }
+
+    .form-control:focus {
+        background: #a0d3e9;
+        color: #330fe5;
+    }
+
+    .table tbody tr td {
+        padding: 18px 2px;
+        text-align: left;
+        background: #9ed7e7;
+        color: #0a0df1;
+    }
+</style>
+
+
+<!-- Sidebar Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row-3">
+      <!-- Sidebar -->
+      <div class="col-md-3">
+        <div class="sidebar pe-4 pb-3 bg-light">
+          <nav class="navbar navbar-light">
+            <a href="index.html" class="navbar-brand mx-4 mb-3">
+              <h3 class="text-primary">
+                <i class="fa fa-hashtag me-2"></i>Dashboard
+              </h3>
+            </a>
+            <div class="d-flex align-items-center ms-4 mb-4">
+              <div class="position-relative">
+                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-0">DEEPIKA PS</h6>
+                <span>Admin</span>
+              </div>
+            </div>
+            <div class="navbar-nav w-100">
+              <a href="index.html" class="nav-item nav-link active">
+                <i class="fa fa-tachometer-alt me-2"></i>Dashboard
+              </a>
+              <div class="nav-item">
+                <a href="#" class="nav-link dropdown-toggle">
+                  <i class="fa fa-laptop me-2"></i>Sales Report
+                </a>
+              </div>
+  
+              <!-- Category Section with Toggle -->
+              <div class="nav-item">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#CategoryMenu" id="categoryMenuLink">
+                  <i class="fa fa-keyboard me-2"></i>Category
+                </a>
+                <div id="CategoryMenu" class="collapse">
+                  <ul class="navbar-nav ps-3">
+                    <li class="nav-item">
+                      <a href="/admin/addCategory" class="nav-link">
+                        <i class="fa fa-plus me-2"></i>Add Category
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="/admin/editCategory" class="nav-link">
+                        <i class="fa fa-list me-2"></i>Category List
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="nav-item">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#productMenu" id="productMenuLink">
+                    <i class="fa fa-keyboard me-2"></i>Products
+                </a>
+                <div id="productMenu" class="collapse">
+                    <ul class="navbar-nav ps-3">
+                        <li class="nav-item">
+                            <a href="/admin/addProduct" class="nav-link">
+                                <i class="fa fa-plus me-2"></i>Add Product
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/editProduct" class="nav-link">
+                                <i class="fa fa-list me-2"></i>Product List
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+  
+              <a href="/admin/users" class="nav-item nav-link">
+                <i class="fa fa-table me-2"></i>Customers
+              </a>
+              <a href="/admin/coupons" class="nav-item nav-link">
+                <i class="fa fa-chart-bar me-2"></i>Coupons
+              </a>
+              <a href="/admin/orders" class="nav-item nav-link">
+                <i class="fa fa-chart-bar me-2"></i>Orders
+              </a>
+              <a href="chart.html" class="nav-item nav-link">
+                <i class="fa fa-chart-bar me-2"></i>Popups
+              </a>
+              <a href="logout" class="nav-item nav-link">
+                <i class="fa fa-sign-out-alt me-2"></i>Logout
+              </a>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+
+      <!-- Content Start -->
+<div class="content">
+  
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+        <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+            <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+        </a>
+        <a href="#" class="sidebar-toggler flex-shrink-0">
+            <i class="fa fa-bars"></i>
+        </a>
+        
+        <div class="navbar-nav align-items-center ms-auto">
+           
+        
+        
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link">
+                
+                    <span class="d-none d-lg-inline-flex">Deepika </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                    <a href="#" class="dropdown-item">My Profile</a>
+                    <!-- <a href="#" class="dropdown-item">Settings</a> -->
+                    <a href="#" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+      <!------------------------------------- Coupon page Header -------------------------------------------------------->
+<div class="col-12 category">
+    <div class="search-container d-flex justify-content-between align-items-center gap-2 p-3">
+        <div class="d-flex align-items-center gap-3">
+            <h2 class="text-white mx-5">
+                <%= title %>
+            </h2>
+            <form action="/admin/coupons" method="get" class="form d-flex align-items-center">
+                <input type="text" name="search" placeholder="Search" class="form-input form-control me-2">
+                <input type="submit" class="btn btn-primary" value="Search">
+            </form>
+        </div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCollection">
+            Add Coupon
+        </button>
+    </div>
+</div>
+
+
+
+            <!----------------------------------------- category table --------------------------------------------------->
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr scope="row" class="product-table-head">
+                            <th scope="col" class="product-table-first">SL.No</th>
+                            <th scope="col">Coupon Code</th>
+                            <th scope="col">Discount Type</th>
+                            <th scope="col">Discount Value</th>
+                            <th scope="col">Min Amount</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" class="product-table-last">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% coupons.forEach((coupon, index)=> { %>
+                            <tr scope="row">
+                                <td>
+                                    <%= index + 1 %>
+                                </td>
+                                <td>
+                                    <%= coupon.code %>
+                                </td>
+                                <td>
+                                    <%= coupon.discountType %>
+                                </td>
+                                <td>
+                                    <%= coupon.discountValue %>
+                                </td>
+                                <td>
+                                    <%= coupon.minimumOrderAmount %>
+                                </td>
+                                <td>
+                                    <%= new Date(coupon.startDate).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <%= new Date(coupon.endDate).toLocaleDateString() %>
+                                </td>
+                                <td>
+                                    <%= coupon.isActive ? 'Active' : 'Blocked' %>
+                                </td>
+                                <td class="coupon-action">
+                                    <a href="#" id="edit-collection-modal" data-bs-toggle="modal"
+                                        data-bs-target="#editCollection" onclick="editCoupon('<%= coupon.id %>')"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    <a href="/admin/statuscoupon?id=<%= coupon.id %>&status=<%= coupon.isActive %>">
+                                        <i class="bi bi-x-circle m-2"></i>
+                                    </a>
+                                    <a href="#" onclick="confirmDelete('<%= coupon._id %>')"><i
+                                            class="bi bi-trash3"></i></a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+        
+    <!------------------------------ Add Coupon Modal ---------------------------->
+
+    <div class="modal fade" id="addCollection" tabindex="-1" aria-labelledby="addCouponLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCouponLabel">Add Coupon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCouponForm">
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" id="code" name="code" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="discountType" class="form-label">Discount Type</label>
+                            <select class="form-control" id="discountType" name="discountType" required>
+                                <option value="Percentage">Percentage</option>
+                                <option value="Fixed">Fixed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="discountValue" class="form-label">Discount Value</label>
+                            <input type="number" class="form-control" id="discountValue" name="discountValue" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="minimumOrderAmount" class="form-label">Minimum Order Amount</label>
+                            <input type="number" class="form-control" id="minimumOrderAmount" name="minimumOrderAmount"
+                                required>
+                        </div>
+                        <button type="submit" class="btn " style="background-color: #0a0df1;">Add Coupon</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--------------------------- Edit Coupon Modal ---------------------------->
+
+    <div class="modal fade" id="editCollection" tabindex="-1" aria-labelledby="editCouponLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCouponLabel">Edit Coupon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCouponForm">
+                        <input type="hidden" id="editCouponId" name="id">
+                        <div class="mb-3">
+                            <label for="editCode" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" id="editCode" name="code" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDiscountType" class="form-label">Discount Type</label>
+                            <select class="form-control" id="editDiscountType" name="discountType" required>
+                                <option value="Percentage">Percentage</option>
+                                <option value="Fixed">Fixed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDiscountValue" class="form-label">Discount Value</label>
+                            <input type="number" class="form-control" id="editDiscountValue" name="discountValue"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="editStartDate" name="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="editEndDate" name="endDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMinimumOrderAmount" class="form-label">Minimum Order Amount</label>
+                            <input type="number" class="form-control" id="editMinimumOrderAmount"
+                                name="minimumOrderAmount" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Coupon</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <script>
+            //--------------------------- Add Coupon ---------------------------
+
+            document.getElementById('addCouponForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                try {
+                    const response = await fetch('/admin/addcoupon', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: result.message,
+                        }).then(() => {
+                            this.reset();
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while adding the coupon.',
+                    });
+                }
+            });
+
+            //--------------------------- Edit coupon ---------------------------
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var editCouponModal = new bootstrap.Modal(document.getElementById('editCollection'));
+                document.getElementById('editCouponForm').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const formData = new FormData(event.target);
+                    const data = Object.fromEntries(formData.entries());
+                    data.id = document.getElementById('editCouponId').value;
+                    try {
+                        const response = await fetch(`/admin/editcoupon/${data.id}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data),
+                        });
+                        const result = await response.json();
+                        Swal.fire({
+                            title: 'Coupon Updated Successfully',
+                            text: result.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to update coupon.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+
+                window.editCoupon = function (id) {
+                    fetch(`/admin/coupons/${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(coupon => {
+                            document.getElementById('editCouponId').value = coupon._id;
+                            document.getElementById('editCode').value = coupon.code;
+                            document.getElementById('editDiscountType').value = coupon.discountType;
+                            document.getElementById('editDiscountValue').value = coupon.discountValue;
+                            document.getElementById('editStartDate').value = new Date(coupon.startDate).toISOString().split('T')[0];
+                            document.getElementById('editEndDate').value = new Date(coupon.endDate).toISOString().split('T')[0];
+                            document.getElementById('editMinimumOrderAmount').value = coupon.minimumOrderAmount;
+                            editCouponModal.show();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching coupon data:', error);
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to load coupon data.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                };
+            });
+
+            //--------------------------- Sweet delete ---------------------------
+
+            async function confirmDelete(id) {
+                const confirmResult = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You are about to delete this coupon. This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                });
+                if (confirmResult.isConfirmed) {
+                    deleteCoupon(id);
+                }
+            }
+
+            //--------------------------- Delete Coupon ---------------------------
+
+            async function deleteCoupon(id) {
+                try {
+                    const response = await fetch(`/admin/deletecoupon/${id}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const result = await response.json();
+                    Swal.fire({
+                        title: 'Delete Coupon',
+                        text: result.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Error deleting coupon',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+
+        </script>
+
+
+      

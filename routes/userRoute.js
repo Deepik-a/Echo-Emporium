@@ -14,9 +14,10 @@ const profileController=require('../controller/userController/profileController'
 const cartController=require('../controller/userController/cartController')
 const navbarController=require('../controller/userController/navbarcontroller')
 const categorySchema=require('../model/categorySchema')
-
-
-
+const checkoutPageController=require('../controller/userController/checkoutcontroller')
+const forgotPassword=require('../controller/userController/forgotPassword')
+const walletController=require('../controller/userController/walletController')
+const orderController=require('../controller/userController/orderController')
 
 
 
@@ -25,7 +26,7 @@ const categorySchema=require('../model/categorySchema')
 
 //-------------------------------- home -------------------------------
 
-route.get('/' , checkUser ,navbarController.home);
+route.get('/' ,navbarController.home);
 
 /*-------------------------------------signup-----------------*/
 route.get('/signup',userController.signup)
@@ -75,10 +76,11 @@ route.get('/auth/google/callback',
 
 // //---------------------------------- Cart ------------------------
 
-route.get('/cart/add/:id', checkUser ,cartController.addToCart);
-route.get('/cart',checkUser , cartController.getCart);
+route.post('/cart/add/:id/:finalPrice',checkUser,cartController.addToCart);
+route.get('/cart',checkUser, cartController.getCart);
 route.get('/cart/remove/:id', checkUser ,cartController.removeFromCart);
-route.post('/cart/update/:id',checkUser , cartController.updateCartQuantity);
+route.post('/cart/increment',checkUser ,cartController.increment);
+route.post('/cart/decrement',checkUser ,cartController.decrement);
 
 
 // //---------------------------------- wishlist------------------------
@@ -89,7 +91,10 @@ route.post('/cart/update/:id',checkUser , cartController.updateCartQuantity);
 
 // //---------------------------------- Order  ------------------------
 
-// route.get('/buynow',  orderController.orderPage);
+route.post('/place-order', checkUser,checkoutPageController.placeOrder);
+route.get('/orders', checkUser, orderController.orderPage);
+route.get('/cancelOrder/:id', checkUser , orderController.cancelOrder);
+
 
 
 
@@ -108,11 +113,35 @@ route.post('/search',checkUser,productController.searchbyProducts)
 
 
  //--------------------------------UserProfile----------------------------
-route.get('/userprofile',activeUser,profileController.profile)
-route.post('/update-profile',  activeUser,profileController.updatedProfile);
-route.post('/add-address',activeUser, profileController.addAddress);
-route.post('/delete-address/:index',activeUser,profileController.removeAddress)
-route.post('/edit-address',activeUser,profileController.editAddress)
+route.get('/userprofile',checkUser,profileController.profile)
+route.post('/update-profile',  checkUser,profileController.updatedProfile);
+route.post('/add-address',checkUser, profileController.addAddress);
+route.post('/delete-address/:index',checkUser,profileController.removeAddress)
+route.post('/edit-address/:index',checkUser,profileController.editAddress)
 
+
+
+//----------------------------- wallet route --------------------------
+
+route.get('/wallet', activeUser , walletController.walletPage);
+
+
+ //--------------------------------CheckoutPage----------------------------
+ route.get('/checkout',checkUser,checkoutPageController.checkout)
+ route.get('/failed-order', checkUser, checkoutPageController.failedOrder);
+
+
+//------------------------- forgot password ---------------------------
+
+route.get('/forgotpassword' , forgotPassword.forgotPassword);
+
+route.post('/forgotpassword' , forgotPassword.forgotPasswordPost);
+
+route.get('/forgotpasswordotp' , forgotPassword.forgotPasswordOtp);
+
+route.post('/forgotpasswordotp' , forgotPassword.forgotPasswordOtpPost);
+route.post('/resetpassword' , forgotPassword.resetPasswordPost);
+
+route.get('/forgotpassword-resend/:email' , forgotPassword.forgotResend);
 
 module.exports = route;
