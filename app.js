@@ -73,7 +73,7 @@ const port=process.env.PORT || 3000
 app.use('/',userRoutes)
 app.use('/admin',adminRoutes)
 // app.get('/',(req,res)=>{
-//   res.render("user/hi")
+//   res.render("admin/offer")
 // })
 
 

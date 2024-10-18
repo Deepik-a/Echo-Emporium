@@ -7,6 +7,7 @@ const  productController = require('../controller/adminController/productControl
 const multerUpload = require('../middleware/multer');
 const couponController = require('../controller/adminController/couponController');
 const orderController = require('../controller/adminController/orderController');
+const offerController = require('../controller/adminController/offerController');
 
 
 
@@ -64,7 +65,6 @@ admin.get('/inventory', orderController.listInventory);
 admin.post('/inventory/update', orderController.updateStock);
 
 
-// //--------------------------------coupon managment----------------------------
 
 admin.get('/coupons/:id?',  couponController.getCoupons);
 
@@ -76,10 +76,19 @@ admin.get('/statuscoupon',  couponController.toggleCouponStatus);
 
 admin.delete('/deletecoupon/:id',  couponController.deleteCoupon);
 
-// // admin.delete('/delete/:id', categoryController.softDeleteCategory);
 
-// // admin.get('/categories', categoryController.getCategoriesForUser);
+//-------------------------------- Offer Management---------------------------------
+// -------------------------------- offer --------------------------------
 
+admin.get('/offer', isAdmin, offerController.getOffer);
+
+admin.post('/addOffer',isAdmin,offerController.addOffer);
+
+admin.post('/editOffer',isAdmin,offerController.editOffer);
+
+admin.get('/deleteOffer/:id',isAdmin,offerController.deleteOffer);
+
+admin.get('/offerStatus',isAdmin,offerController.offerStatus);
 
 
 

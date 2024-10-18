@@ -1,190 +1,135 @@
 
-  <div class="container mt-5">
-    <div class="row">
-      <!-- Sidebar and Edit Profile Section -->
-      <div class="col-md-4"> <!-- Changed to col-md-4 for better layout -->
-        <div class="card mb-3">
-          <div class="card-header bg-primary text-white">
-            My Account
+
+
+
+<%-include('navbar') %>
+
+<div class="container mt-5">
+  <div class="row">
+    <!-- Sidebar and Edit Profile Section -->
+    <div class="col-md-4">
+      <!-- User Profile Section -->
+      <div class="card mb-3">
+        <div class="card-body text-center">
+          <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="User Avatar">
+          <form action="/update-profile" method="post" novalidate id="profileForm">
+            <input type="text" class="form-control mb-2" name="name" id="name" required value="<%= userDetail.name %>" placeholder="Name"/>
+            <input type="text" class="form-control mb-2" name="phone" id="phone" required value="<%= userDetail.phone %>" placeholder="Phone"/>
+            <button class="btn btn-primary btn-sm">Edit Profile</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- My Account Section -->
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          My Account
+        </div>
+        <div class="list-group">
+          <a href="/orders" class="list-group-item list-group-item-action">My Orders</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#myStuff" aria-expanded="false" aria-controls="myStuff">My Stuff</a>
+          <div class="collapse" id="myStuff">
+            <a href="/wishlist" class="list-group-item list-group-item-action ms-3">Wishlist</a>
+            <a href="/wallet" class="list-group-item list-group-item-action ms-3">My Wallet</a>
+            <a href="/coupons" class="list-group-item list-group-item-action ms-3">Coupons</a>
+            <a href="/reviews" class="list-group-item list-group-item-action ms-3">Reviews & Ratings</a>
+            <a href="/forgotpassword" class="list-group-item list-group-item-action ms-3">Change Password</a>
           </div>
-          <div class="list-group">
-            <a href="/orders" class="list-group-item list-group-item-action">My Orders</a>
-            <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#myStuff" aria-expanded="false" aria-controls="myStuff">My Stuff</a>
-            <div class="collapse" id="myStuff">
-              <a href="/wishlist" class="list-group-item list-group-item-action ms-3">Wishlist</a>
-              <a href="/wallet" class="list-group-item list-group-item-action ms-3">My Wallet</a>
-              <a href="/coupons" class="list-group-item list-group-item-action ms-3">Coupons</a>
-              <a href="/reviews" class="list-group-item list-group-item-action ms-3">Reviews & Ratings</a>
-              <a href="/forgotpassword" class="list-group-item list-group-item-action ms-3">Change Password</a>
+          <a href="/payments" class="list-group-item list-group-item-action">Payments</a>
+          <a href="/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Address Section (Right Column) -->
+    <div class="col-md-8">
+      <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+          Add Address
+        </div>
+        <div class="card-body">
+          <form action="/add-address" method="post" novalidate id="addressForm">
+            <div class="mb-3">
+              <label for="building" class="form-label">Building/Apartment</label>
+              <input type="text" name="building" class="form-control" id="building" placeholder="Building Name" required>
+              <div class="invalid-feedback">Building name is required.</div>
             </div>
-            <a href="/payments" class="list-group-item list-group-item-action">Payments</a>
-            <a href="/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
-          </div>
-        </div>
-
-        <!-- User Profile Section -->
-        <div class="card mb-3">
-          <div class="card-body text-center">
-            <img src="https://via.placeholder.com/150" class="rounded-circle mb-3" alt="User Avatar">
-            <form action="/update-profile" method="post">
-              <input type="text" class="form-control mb-2" name="name" id="name" required value="<%= userDetail.name %>" placeholder="Name"/>
-              <input type="text" class="form-control mb-2" name="phone" id="phone" required value="<%= userDetail.phone %>" placeholder="Phone"/>
-              <button class="btn btn-primary btn-sm">Edit Profile</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content for Addresses -->
-      <div class="col-md-8"> <!-- Adjusted to col-md-8 to fit layout -->
-        <!-- Add Address Section -->
-        <div class="card mb-3">
-          <div class="card-header bg-primary text-white">
-            Add Address
-          </div>
-          <div class="card-body">
-            <form action="/add-address" method="post">
-              <div class="mb-3">
-                <label for="building" class="form-label">Building/Apartment</label>
-                <input type="text" name="building" class="form-control" id="building" placeholder="Building Name" required>
-              </div>
-              <div class="mb-3">
-                <label for="street" class="form-label">Street</label>
-                <input type="text" name="street" class="form-control" id="street" placeholder="Street Name" required>
-              </div>
-              <div class="mb-3">
-                <label for="city" class="form-label">City</label>
-                <input type="text" name="city" class="form-control" id="city" placeholder="City" required>
-              </div>
-              <div class="mb-3">
-                <label for="state" class="form-label">State</label>
-                <input type="text" name="state" class="form-control" id="state" placeholder="State" required>
-              </div>
-              <div class="mb-3">
-                <label for="country" class="form-label">Country</label>
-                <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
-              </div>
-              <div class="mb-3">
-                <label for="pincode" class="form-label">Pincode</label>
-                <input type="text" name="pincode" class="form-control" id="pincode" placeholder="Pincode" required>
-              </div>
-              <div class="mb-3">
-                <label for="phonenumber" class="form-label">Phone Number</label>
-                <input value="<%= userDetail.phone %>" class="form-control" id="phonenumber" placeholder="Phone Number" required>
-              </div>
-              <div class="mb-3">
-                <label for="landmark" class="form-label">Landmark</label>
-                <input type="text" name="landmark" class="form-control" id="landmark" placeholder="Landmark">
-              </div>
-              <button type="submit" class="btn btn-success">Add Address</button>
-            </form>
-          </div>
-        </div>
-
-        <!-- Saved Addresses Section -->
-        <div class="card mb-3">
-          <div class="card-header bg-primary text-white">
-            Your Addresses
-          </div>
-          <div class="list-group">
-            <% if (userDetail.address && userDetail.address.length > 0) { %>
-              <% userDetail.address.forEach((address, index) => { %>
-                <div class="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <span>Address <%= index + 1 %>:</span>
-                    <span><%= address.building %>, <%= address.street %>, <%= address.city %></span>
-                  </div>
-                  <div>
-                    <!-- Modal Trigger Button -->
-                    <div class="btn btn-warning btn-sm me-2" 
-     data-bs-toggle="modal" 
-     data-bs-target="#editAddressModal" 
-     onclick="populateEditForm('<%= index %>', '<%= address.building %>', '<%= address.street %>', '<%= address.city %>', '<%= address.phone %>', '<%= address.pincode %>', '<%= address.landmark %>', '<%= address.state %>', '<%= address.country %>')">Edit</div>
-
-
-                         <!-- Edit Address Modal -->
-<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <form id="editAddressForm" method="POST">
-              
-                  <div class="mb-3">
-                      <label for="building" class="form-label">Building</label>
-                      <input type="text" class="form-control" name="building" id="building" value="<%= address.building %>" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="street" class="form-label">Street</label>
-                      <input type="text" class="form-control" name="street" id="street" value="<%= address.street %>" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="city" class="form-label">City</label>
-                      <input type="text" class="form-control" name="city" id="city" value="<%= address.city %>" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="phone" class="form-label">Phone</label>
-                      <input type="text" class="form-control" name="phone" id="phone" value="<%= address.phone %>" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="pincode" class="form-label">Pincode</label>
-                      <input type="text" class="form-control" name="pincode" id="pincode"value="<%= address.pincode%>"  required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="landmark" class="form-label">Landmark</label>
-                      <input type="text" class="form-control" name="landmark" id="landmark"value="<%= address.landmark %>" >
-                  </div>
-                  <div class="mb-3">
-                      <label for="state" class="form-label">State</label>
-                      <input type="text" class="form-control" name="state" id="state" value="<%= address.state%>" required>
-                  </div>
-                  <div class="mb-3">
-                      <label for="country" class="form-label">Country</label>
-                      <input type="text" class="form-control" name="country" id="country"value="<%= address.country %>"  required>
-                  </div>
-              </form>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" form="editAddressForm" class="btn btn-primary">Update</button>
-          </div>
-      </div>
-  </div>
-</div>
-
-                    <!-- Delete Address Form -->
-                    <form action="/delete-address/<%= index %>" method="post" style="display:inline;">
-                      <input type="hidden" name="addressIndex" value="<%= index %>">
-                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                  </div>
-                </div>
-              <% }); %>
-            <% } else { %>
-              <p class="text-center m-3">No saved addresses.</p>
-            <% } %>
-          </div>
+            <div class="mb-3">
+              <label for="street" class="form-label">Street</label>
+              <input type="text" name="street" class="form-control" id="street" placeholder="Street Name" required>
+              <div class="invalid-feedback">Street name is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" name="city" class="form-control" id="city" placeholder="City" required>
+              <div class="invalid-feedback">City is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="state" class="form-label">State</label>
+              <input type="text" name="state" class="form-control" id="state" placeholder="State" required>
+              <div class="invalid-feedback">State is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="country" class="form-label">Country</label>
+              <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
+              <div class="invalid-feedback">Country is required.</div>
+            </div>
+            <div class="mb-3">
+              <label for="pincode" class="form-label">Pincode</label>
+              <input type="text" name="pincode" class="form-control" id="pincode" placeholder="Pincode" required pattern="\d{6}">
+              <div class="invalid-feedback">Please enter a valid 6-digit pincode.</div>
+            </div>
+            <div class="mb-3">
+              <label for="phonenumber" class="form-label">Phone Number</label>
+              <input type="text" name="phonenumber" class="form-control" id="phonenumber" value="<%= userDetail.phone %>" placeholder="Phone Number" required pattern="^\d{10}$">
+              <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+            </div>
+            <div class="mb-3">
+              <label for="landmark" class="form-label">Landmark</label>
+              <input type="text" name="landmark" class="form-control" id="landmark" placeholder="Landmark">
+            </div>
+            <button type="submit" class="btn btn-success">Add Address</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+
 <script>
-function populateEditForm(index, building, street, city, phone, pincode, landmark, state, country) {
-    const form = document.getElementById('editAddressForm');
-    form.action = `/edit-address/${index}`;
-    document.querySelector('input[name="building"]').value = building;
-    document.querySelector('input[name="street"]').value = street;
-    document.querySelector('input[name="city"]').value = city;
-    document.querySelector('input[name="phone"]').value = phone;
-    document.querySelector('input[name="pincode"]').value = pincode;
-    document.querySelector('input[name="landmark"]').value = landmark;
-    document.querySelector('input[name="state"]').value = state;
-    document.querySelector('input[name="country"]').value = country;
+// Real-time validation function
+function validateInput(input) {
+  if (input.checkValidity()) {
+    input.classList.add('is-valid');
+    input.classList.remove('is-invalid');
+  } else {
+    input.classList.add('is-invalid');
+    input.classList.remove('is-valid');
+  }
 }
+
+// Add event listeners for all input fields
+document.querySelectorAll('#addressForm input').forEach(input => {
+  input.addEventListener('input', () => validateInput(input));
+});
+
+// Handle form submission to prevent submission if form is invalid
+document.getElementById('addressForm').addEventListener('submit', function (event) {
+  const form = this;
+  if (!form.checkValidity()) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  form.classList.add('was-validated');
+});
 </script>
+
+
+       
+
+ 
+      
+
+<%-include('footer') %>

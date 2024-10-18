@@ -44,10 +44,8 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum:['Pending', 'Shipped', 'Confirmed', 'Delivered', 'Cancelled', 'Returned']
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+}, {
+    timestamps: true // Adds createdAt and updatedAt automatically
 });
 
 module.exports = mongoose.model('orders', orderSchema);
