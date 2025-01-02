@@ -26,14 +26,26 @@ const cartSchema = new mongoose.Schema({
         required: true
     },
     items: [itemSchema],
-    payableAmount: {
-        type: Number,
-        default: 0
+    payableAmount:{
+        type:Number,
+        default:0
+    },
+    couponId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Coupon'
+    },
+    couponDiscount:{
+        type:Number,
+        default:0
+    },
+    isCouponApplied:{
+type:Boolean,
+default:false
     },
     totalPrice: {
         type: Number,
         default: 0
-    }
+    },
 });
 
 module.exports = mongoose.model('carts', cartSchema);

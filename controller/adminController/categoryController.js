@@ -4,6 +4,14 @@ const categorySchema = require('../../model/categorySchema');
 const addCategory = async (req, res) => {
     try {
         const { name } = req.body;
+
+        // Check if category already exists
+        const existingCategory = await categorySchema.findOne({ name });
+
+        if (existingCategory) {
+            // Send error response if category already exists
+            return res.status(400).json({ message: 'Category already exists' });
+        }
         const newCategory = new categorySchema({ name });
         await newCategory.save();
         

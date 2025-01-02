@@ -1,298 +1,233 @@
-<style>
 
-    
-    .user-nav {
-        display: flex;
-        justify-content: center;
-        padding: 1rem;
-    }
 
-    .user-navbar {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        max-width: 1450px;
-        background:rgb(80, 141, 78);
-        padding: .5rem;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
 
-    .user-navbar h3 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-left: 5vw;   
-       
-    }
 
-    .search-nav {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        background-color: rgb(214, 239, 216);
-        border-radius: 8px;
-        margin: 0 1rem;
-        flex-grow: 1;
-        max-width: 260px;
-    }
 
-    .form-input {
-        background-color: rgb(214, 239, 216);
-        padding: 0.5rem;
-        border: none;
-        border-radius: 5px;
-        font-size: 14px;
-        width: 100%;
-    }
 
-    .form-input::placeholder {
-        color: #1a1a1a;
-    }
 
-    .form-input:focus {
-        background-color: #fefeeb;
-        outline: none;
-    }
 
-    .user-profile-icon svg {
-        margin-right: 2rem;
-        color: #000000;
-        width: 2.5rem;
-        height: 2.5rem;
-    }
+ <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-mQ93sFwlmJm5rFhU8nCBkz0H4DlJgECp3C5D4JfxSDNks+7c5f/B7IjFFjvGsvmJ" crossorigin="anonymous">
 
-    .user-nav-icon {
-        display: flex;
-        list-style: none;
-        gap: 2rem;
-        margin-top: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-    }
+<!-- Bootstrap JS Bundle (Includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pj0h4AAq2f82qnTtCV5z2vCke0fJTN6ewhZf2jtcz2eoi9YBJoZ0tW5G52mOK9G2" crossorigin="anonymous"></script>
 
-    .user-nav-icon li a {
-        color: #fefeeb;
-        text-decoration: none;
-        font-size: 1em;
-    }
+   <style>
+/* Professional Green Navbar Styles */
+:root {
+    /* Define color palette */
+    --primary-green: #1A5319;       /* Deep forest green for primary text and accents */
+    --secondary-green: #2E7D32;     /* Slightly brighter green for hover states */
+    --background-green: #E8F5E9;    /* Very light, soft green for background */
+    --border-green: #4CAF50;        /* Medium green for borders and subtle elements */
+    --text-color: #333333;          /* Dark gray for improved readability */
+}
 
-    .user-nav-icon li a:hover {
-        color: #BEBEB6;
-    }
+.main-navbar {
+    background-color: var(--background-green);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 1px solid var(--border-green);
+    transition: all 0.3s ease;
+}
 
-    .user-login-btn {
-        background: #fefeeb;
-        color: #232323;
-        margin-right: 1rem;
-    }
+.main-navbar .navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
 
-    .user-login-btn:hover {
-        background: #f55;
-        color: #fefeeb;
-    }
+.main-navbar .top-navbar .brand-name {
+    color: var(--primary-green);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    font-family: 'Montserrat', 'Arial', sans-serif;
+    transition: color 0.3s ease;
+}
 
-    .user-login-icon {
-        color: #fefeeb;
-        margin-right: 2rem;
-        cursor: pointer;
-    }
+.main-navbar .top-navbar .nav-link {
+    color: var(--primary-green);
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Roboto', 'Arial', sans-serif;
+    position: relative;
+    transition: all 0.3s ease;
+}
 
-    .sidebar {
-        height: 70%;
-        width: 250px;
-        position: fixed;
-        top: 0;
-        right: -300px;
-        background-color: #232323;
-        transition: right 0.3s ease;
-        box-shadow: 0 0 20px #000000;
-        z-index: 10;
-    }
+/* Sophisticated hover effect */
+.main-navbar .top-navbar .nav-link::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--secondary-green);
+    transition: width 0.3s ease;
+}
 
-    .sidebar ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        list-style-type: none;
-        margin-top: 2rem;
-        margin: 0;
-        padding: 0;
-        gap: 1rem;
-        color: #000000;
-    }
+.main-navbar .top-navbar .nav-link:hover::before {
+    width: 100%;
+}
 
-    .sidebar ul li {
-        width: 90%;
-        padding: 10px;
-        cursor: pointer;
-        border-radius: 10px;
-        font-weight: 700;
-        transition: .3s ease-in-out;
-    }
+.main-navbar .top-navbar .nav-link:hover {
+    color: var(--secondary-green);
+}
 
-    .sidebar ul li:hover {
-        border: 1px solid #fefeeb;
-    }
+.main-navbar .navbar .nav-item .nav-link {
+    padding: 10px 15px;
+    color: var(--text-color);
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
 
-    .sidebar ul li a {
-        display: block;
-        width: 100%;
-        text-decoration: none;
-        color: #fefeeb;
-    }
-
-    .toggle-btn {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-    }
-
-    #go-back-home {
-        background-color: #707070;
-        color: #ffffff;
-    }
-
-    .dropdown a {
-        color: #ffffff;
-        /* background: #232323; */
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: .5rem;
-    }
-
-    .dropdown-menu {
-      
-        border-radius: 10px;
-        background:rgb(80, 141, 78);
-        color: #070707;
-
-    }
-
-    .badge {
-        background-color: red;
-        color: rgb(4, 4, 4);
-        padding: 3px 7px;
-        border-radius: 50%;
-        font-size: 0.8em;
-        position: relative;
-        top: -10px;
-        right: 10px;
-    }
-
-    /* Responsive design */
-
-    @media (max-width: 768px) {
-        .user-navbar {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 1rem;
-            align-items: center
-        }
-        .search-nav{
-            max-width: 760px;
-        }
-
-        .user-navbar h3 {
-            margin: 2rem 0;
-            font-size: 1.2rem;
-            margin-left: 0;
-        }
-
-        .search-nav {
-            margin: 0 0 1rem 0;
-            width: 100%;
-            flex-grow: 0;
-        }
-
-        .user-nav-icon {
-            justify-content: center;
-            width: 100%;
-            gap: 1rem;
-        }
-
-        .user-login-btn {
-            margin-right: 0;
-            width: 100%;
-            text-align: center;
-        }
-        .footer-section.logo {
-    display: flex;
-    align-items: center;
+.main-navbar .navbar .nav-item .nav-link:hover {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: var(--secondary-green);
 }
 
 .logo-img {
-    max-height: 50px; /* Adjust the size of the logo */
+    max-width: 250px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 
-.header {
-    margin-left: 15px; /* Spacing between the logo and the text */
-    font-size: 24px; /* Adjust the font size if needed */
+.logo-img:hover {
+    transform: scale(1.05);
 }
 
+/* Dropdown Menu Styling */
+.main-navbar .top-navbar .dropdown-menu {
+    border: 1px solid var(--border-green);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 0;
+}
+
+.main-navbar .top-navbar .dropdown-menu .dropdown-item {
+    padding: 10px 15px;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.main-navbar .top-navbar .dropdown-menu .dropdown-item:hover {
+    background-color: rgba(46, 125, 50, 0.1);
+    color: var(--secondary-green);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .main-navbar .top-navbar .brand-name {
+        font-size: 1.8rem;
     }
 
-    @media (max-width: 480px) {
-        .user-navbar h3 {
-            font-size: 1rem;
-        }
-
-        .form-input {
-            font-size: 12px;
-        }
-
-        .user-nav-icon li a {
-            font-size: 0.9em;
-        }
-        .search-nav{
-            max-width: 400px;
-        }
+    .logo-img {
+        max-width: 150px;
     }
-
-    .contact-link {
-    margin-right: 15px; /* Pushes the contact link to the left */
 }
-</style>
 
+/* Search Bar Styling */
+.search-bar {
+    border: 1px solid var(--border-green);
+    border-radius: 20px;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+    font-family: 'Roboto', 'Arial', sans-serif;
+}
 
-<!-------------------------------------------- User Navbar  ------------------------------------------------->
+.search-bar:focus {
+    outline: none;
+    border-color: var(--secondary-green);
+    box-shadow: 0 0 5px rgba(46, 125, 50, 0.3);
+}
+   </style>
 
-<div class="user-nav" style="width: 100%; margin: 0; padding: 0;">
-    <div class="user-navbar d-flex justify-content-between align-items-center" style="width: 100%; max-width: 100%; padding: 0;">
-        <div class="footer-section logo d-flex align-items-center">
-            <img src="/public/assets/logo.png" alt="logo" class="logo-img">
-            <h3 class="text-white header ms-3">ECHO EMPORIUM</h3>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <div class="main-navbar shadow-sm">
+        <div class="top-navbar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <!-- Brand and Logo -->
+                    <div class="col-6 col-md-4 d-flex align-items-center">
+                        <img src="/public/assets/1-removebg-preview.png" alt="logo" class="logo-img" >
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="col-12 col-md-4 my-3 my-md-0">
+                        <form action="/search" method="POST" class="search-nav d-flex">
+                            <input type="text" name="search" class="form-control search-bar" placeholder="search" aria-label="Search">
+                            <button type="submit" class="btn  ms-2">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right-side Icons (Cart, Wishlist, Login/User) -->
+                    <div class="col-6 col-md-4 d-flex justify-content-end align-items-center">
+                        <ul class="nav">
+                            <!-- Cart Icon -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="/cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span class="icon-text"> Cart</span>
+                                </a>
+                            </li>
+                            <!-- Wishlist Icon -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="/wishlist">
+                                    <i class="fa fa-heart"></i>
+                                    <span class="icon-text"> Wishlist</span>
+                                </a>
+                            </li>
+                            <!-- User Dropdown -->
+                            <li class="nav-item dropdown">
+                                <% if (!user) { %>
+                                    <a href="javascript:void(0);" class="nav-link" id="loginAlert">
+                                        <i class="fa fa-user"></i>
+                                        <span class="icon-text"> Login</span>
+                                    </a>
+                                    <script>
+                                        document.getElementById('loginAlert').addEventListener('click', function() {
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Not Logged In',
+                                                text: 'You must be logged in to access this feature.',
+                                                confirmButtonText: 'Login Now',
+                                                confirmButtonColor: '#1A5319',
+                                                showCancelButton: true,
+                                                cancelButtonColor: '#800000',
+                                                cancelButtonText: 'Later'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = '/login'; // Redirect to login page
+                                                }
+                                            });
+                                        });
+                                    </script>
+                                  <% } else { %>
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-user"></i>
+                                        <span class="icon-text"><%= user.name %></span>
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href="/">Home</a></li>
+                                        <li><a class="dropdown-item" href="/userprofile">Profile</a></li>
+                                        <li><a class="dropdown-item" href="/orders"><i class="fa fa-list"></i> My Orders</a></li>
+                                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                                    </ul>
+                                  <% } %>
+                                  
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form action="/search" method="POST" class="search-nav d-flex">
-            <input type="text" name="search" class="form-input" placeholder="search">
-            <button type="submit" class="btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-        <ul class="user-nav-icon d-flex">
-            <li><a href="/">Home</a></li>
-         
-            <li>  <% if (user) { %>
-                <a class="nav-link-items user-login-icon" href="/userprofile">
-                    <i class="fa-solid fa-user"></i>
-                </a>
-                <% } else { %>
-                    <a href="/login" >Login</a>
-                    <% } %></li>
-            
-            <!-- Cart Icon -->
-            <li><a href="/cart"><i class="fa-solid fa-cart-shopping"></i></a></li>
-            
-            <!-- Wishlist Icon -->
-            <li><a href="/wishlist"><i class="fa-solid fa-heart"></i></a></li>
-        
-           
-            <li class="contact-link"><a href="/logout">Logout</a></li>
-        </ul>
-        
     </div>
-</div>
 
-   
 
 

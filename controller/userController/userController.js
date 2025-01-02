@@ -1,5 +1,7 @@
 const userSchema = require("../../model/userSchema");
 const categorySchema=require('../../model/categorySchema')
+const productSchema=require('../../model/productSchema')
+
 const bcrypt = require("bcrypt");
 
 const sendOTP = require("../../services/emailSender");
@@ -125,64 +127,70 @@ res.redirect('/otp')
 
 
 // GET login page
-const login = async(req, res) => {
-  const categories=await categorySchema.find({isDeleted:false})
+const login = async (req, res) => {
+  try {
+    const categories = await categorySchema.find({ isDeleted: false });
 
-  if (req.session.user) {
-         
-    res.render('user/Landingpage',{categories}); // Redirect if the user is already logged in
-  } else {
-    res.render('user/login', { title: 'Login', user: req.session.user });
+    if (req.session.user) {
+      // Fetch products only if the user is logged in
+      const products = await productSchema.find({ isActive: true });
+
+      // Render Landingpage with user session data
+      return res.render('user/Landingpage', {
+        categories,
+        user: req.session.user,
+        products,
+      });
+    }
+
+    // Render login page if no active session
+    res.render('user/login', { title: 'Login', user: null });
+  } catch (error) {
+    console.error(`Error in GET /login: ${error.message}`);
+    res.status(500).send('Internal Server Error');
   }
 };
 
 // POST login form handler
 const loginpost = async (req, res) => {
   try {
-    console.log('loginpost');
-    console.log(req.body);
-
     const { email, password } = req.body;
 
     // Find user by email
     const user = await userSchema.findOne({ email });
-    const categories=await categorySchema.find({isDeleted:false})
-
-
-
-    
-
     if (!user) {
-      // If user is not found, redirect to login with an error flag
+      // Redirect if the user does not exist
       return res.redirect('/login?error=userNotFound');
     }
 
     // Check if the user is blocked
     if (user.isBlocked) {
-      console.log("user.isBlocked",user.isBlocked) ;
-      // If the user is blocked, redirect to login with the blocked error flag
       return res.redirect('/login?error=blocked');
     }
 
-    req.session.user=user
-
-    // // Check if password matches (assuming bcrypt is used for hashing passwords)
-    // const isMatch = await bcrypt.compare(password, user.password); 
+    // Check if the password is correct
+    // const isMatch = await bcrypt.compare(password, user.password); // Assuming bcrypt is used
     // if (!isMatch) {
-    //   // If password does not match, redirect to login with invalid password error
     //   return res.redirect('/login?error=invalidPassword');
     // }
 
-    // // Set session for the logged-in user
-    // req.session.user = user;
-    console.log('User found and session set:', req.session.user);
-    
+    // Set session for the logged-in user
+    req.session.user = user;
+
+    // Fetch categories and products
+    const categories = await categorySchema.find({ isDeleted: false });
+    const products = await productSchema.find({ isActive: true });
+
+    // Debugging
+    console.log('User found and session set:', user);
+    console.log('Categories:', categories);
+    console.log('Products:', products);
 
     // Redirect to the landing page after successful login
-    res.render('user/LandingPage',{categories,user});
+    res.render('user/Landingpage', { categories, user, products });
   } catch (error) {
-    console.log(`Error during login: ${error}`);
-    // Handle server errors with a generic error flag
+    console.error(`Error during login: ${error.message}`);
+    // Redirect to login with a generic error
     res.redirect('/login?error=serverError');
   }
 };
