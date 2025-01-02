@@ -25,7 +25,7 @@
         <div class="row">
             <% product.imgArray.forEach((img, index) => { %>
                 <div class="col-md-4 zoom-container">
-                    <img id="zoomedImg<%= index %>" src="<%= img %>" alt="Zoomed Image" class="zoomed-img img-thumbnail">
+                    <img id="zoomedImg<%= index %>" src="<%= '/uploads/' +img.productImage%>" alt="Zoomed Image" class="zoomed-img img-thumbnail">
                 </div>
             <% }) %>
         </div>

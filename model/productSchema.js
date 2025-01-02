@@ -19,8 +19,8 @@ const schema = new mongoose.Schema({
         required: true // Correctly placed for 'category' field
     },
     imgArray: {
-        type: [String], // Array of image paths
-        required: true // Correctly placed for 'imgArray' field
+        type: [String],
+        default: [],
     },
     description: {
         type: String,

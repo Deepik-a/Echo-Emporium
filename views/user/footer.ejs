@@ -1,23 +1,29 @@
 <style>
-  .footer {
-  color: #fefeeb;
-  background:rgb(80, 141, 78);
+  .footers {
+   
+    background-color: rgb(214, 239, 216);
   padding: 20px 0;
-  border-top: 1px solid #333;
+  border-top: 0.5px solid #333;
+ 
 }
 
-.footer-container {
+.footers-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
   padding: 0 10%;
+  background-color: rgb(214, 239, 216);
+  
+
 }
 
-.footer-section {
+.footers-section {
   flex: 1;
   min-width: 200px;
   margin: 10px;
+  background-color: rgb(214, 239, 216);
+
 }
 
 .logo img {
@@ -27,23 +33,25 @@
 .social-icons a {
   padding: 10px;
   margin: 0 5px;
-  color: #fff;
+  color: rgb(26, 83, 25);
   text-decoration: none;
   font-size: 16px;
 }
 
-.footer-section h3 {
+.footers-section h3 {
   margin-bottom: 10px;
 }
 
-.footer-section p, .footer-section a {
-  color: #bbb;
+.footers-section p, .footers-section a {
+  color:rgb(26, 83, 25);
+  background-color: rgb(214, 239, 216);
+
   text-decoration: none;
   margin: 5px 0;
 }
 
-.footer-section a:hover {
-  color: #fff;
+.footers-section a:hover {
+  color:rgb(26, 83, 25);
 }
 
 .subscribe-box {
@@ -62,8 +70,8 @@
 .subscribe-box button {
   padding: 10px;
   border: none;
-  background-color: #333;
-  color: #fff;
+  background-color:  rgb(214, 239, 216);;
+  color: rgb(26, 83, 25);
   border-radius: 0 4px 4px 0;
   cursor: pointer;
   margin: 0;
@@ -73,26 +81,29 @@
   font-size: 16px;
 }
 
-.footer-bottom {
+.footers-bottom {
   text-align: center;
+  background-color: rgb(214, 239, 216);
   padding: 10px 0;
-  border-top: 1px solid #333;
+  border-top: 0.5px solid #333;
   margin-top: 20px;
 }
 
-.footer-bottom p {
+.footers-bottom p {
   margin: 0;
-  color: #bbb;
+  color: rgb(26, 83, 25);
+  background-color: rgb(214, 239, 216);
+
 }
 
 </style>
 
-<!-------------------------------------------- User Footer ------------------------------------------------->
+<!-------------------------------------------- User footers ------------------------------------------------->
 
 
-<footer class="footer" id="footer">
-  <div class="footer-container">
-      <div class="footer-section logo">
+<footer class="footers" id="footers">
+  <div class="footers-container">
+      <div class="footers-section logo">
           <img src="/public/assets/logo.png" >
           <h3>Echo Emporium</h3>
           <p>Follow us on</p>
@@ -103,14 +114,14 @@
               <a href="#"><i class="fab fa-linkedin-in"></i></a>
           </div>
       </div>
-      <div class="footer-section " id="contact">
+      <div class="footers-section " id="contact">
           <h3>Contact</h3>
           <p>BandraLine</p>
           <p>Mumbai</p>
           <p>echoemporium@gmail.com</p>
           <p>+919089785623</p>
       </div>
-      <div class="footer-section account">
+      <div class="footers-section account">
           <h3>Account</h3>
           <p><a href="/profile">My Account</a></p>
           <p><a href="/login">Login / Register</a></p>
@@ -118,14 +129,14 @@
           <p><a href="/wishlist">Wishlist</a></p>
           <p><a href="/allproduct">Shop</a></p>
       </div>
-      <div class="footer-section quick-link">
+      <div class="footers-section quick-link">
           <h3>Quick Link</h3>
           <p><a href="#">Privacy Policy</a></p>
           <p><a href="#">Terms Of Use</a></p>
           <p><a href="#">FAQ</a></p>
           <p><a href="#">Contact</a></p>
       </div>
-      <div class="footer-section subscribe">
+      <div class="footers-section subscribe">
           <h3>Exclusive</h3>
           <p>Subscribe</p>
           <p>Get 10% off your first order</p>
@@ -135,7 +146,7 @@
           </div>
       </div>
   </div>
-  <div class="footer-bottom">
+  <div class="footers-bottom">
       <p>&copy; 2024 echoemporium. All rights reserved</p>
   </div>
 </footer>

@@ -1,7 +1,7 @@
 const userSchema=require('../../model/userSchema')
 const productSchema=require('../../model/productSchema')
 const categorySchema=require('../../model/categorySchema')
-
+const Offer=require('../../model/offerSchema')
 
 
 
@@ -37,23 +37,59 @@ const getProductsByCategory = async (req, res) => {
 // Get Product Detail by ID
 const getProductDetail = async (req, res) => {
     try {
+        console.log("entered product detail")
         const productId = req.params.id; // Get product ID from URL params
-        const product = await productSchema.findById(productId).populate('category')// Fetch product and populate category
+        const product = await productSchema.findById(productId).populate('category'); // Fetch product and populate category
 
         if (!product) {
             return res.status(404).render('404', { message: 'Product not found' });
         }
 
+        const currentDate = new Date();
+
+        // Fetch applicable offers
+        const applicableOffers = await Offer.find({
+            $and: [
+                { isActive: true },
+                { startDate: { $lte: currentDate } },
+                { endDate: { $gte: currentDate } },
+                {
+                    $or: [
+                        { applicableProduct: product._id },
+                        { applicableCategory: product.category }
+                    ]
+                }
+            ]
+        });
+
+        // Prioritize product offer over category offer if both exist
+        let productOffer = null;
+        let categoryOffer = null;
+
+        // Filter product and category offers
+        applicableOffers.forEach((offer) => {
+            if (offer.offerType === 'product' && offer.applicableProduct.toString() === product._id.toString()) {
+                productOffer = offer; // Product offer takes priority
+            } else if (offer.offerType === 'category' && offer.applicableCategory.toString() === product.category._id.toString()) {
+                categoryOffer = offer;
+            }
+        });
+
+        // If a product offer exists, apply that offer
+        let appliedOffer = productOffer || categoryOffer;
+
+
         // Get the category name from the populated category object
         const categoryName = product.category.name;
 
-        // Render the product detail page and pass product data + categoryName
-        res.render('user/productsDetail', { product, categoryName });
+        // Render the product detail page and pass product data + categoryName + the applicable offer
+        res.render('user/productsDetail', { product, categoryName, applicableOffers, appliedOffer });
     } catch (error) {
         console.error('Error fetching product:', error);
         res.status(500).send('Server Error');
     }
 };
+
 
 const imageZoom= async (req, res) => {
     try {
@@ -77,6 +113,8 @@ const getAllProducts = async (req, res) => {
         console.log("getAllProducts")
         const products = await productSchema.find({ isActive: true}); // Fetch all products from the database
         const categories = await categorySchema.find({ isDeleted: false });
+        console.log("products",products)
+        console.log("products.imgarray",products.imgArray)
         res.render('user/AllProduct', { products,categories }); 
     } catch (error) {
         console.log('Error fetching products: ', error);
@@ -85,6 +123,7 @@ const getAllProducts = async (req, res) => {
 };
 
 const sortAllproducts= async (req, res) => {
+    console.log("sortAllProducts")
     const categories = await categorySchema.find({ isDeleted: false });
     let sortOption = {};
 

@@ -251,174 +251,370 @@ a {
     border-color: #008000;     /* Green border */
 }
 
+body{
+    background:#eee;
+}
+
+.card {
+    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+    border-radius: 1rem;
+}
+
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.5rem 1.5rem;
+}
 
 
 </style>
 
-<div class="container">
-    <div class="row">
-        <div class="col-xl-7">
-            <div class="card">
-                <div class="card-body">
-                    <form action="/place-order" method="POST" id="orderForm">
-                        <ol class="activity-checkout mb-0 px-4 mt-3">
-                            <li class="checkout-item">
-                                <div class="avatar checkout-icon p-1">
-                                    <div class="avatar-title rounded-circle bg-success">
-                                        <i class="bx bxs-truck text-white font-size-20"></i>
-                                    </div>
-                                </div>
-                                <div class="feed-item-list">
-                                    <div>
-                                        <h5 class="font-size-16 mb-1">Shipping Info</h5>
-                                        <div class="mb-5">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div>
-                                                        <span class="fs-14 mb-4 d-block">Saved Address</span>
-                                                        <% if (addresses.length > 0) { %>
-                                                            <% addresses.forEach(address => { %>
-                                                                <label class="card-radio-label mb-0">
-                                                                    <input type="radio" name="selectedAddress" class="card-radio-input" value="<%= address._id %>" required>
-                                                                    <div class="card-radio p-3">
-                                                                        <div style="color:rgb(26, 83, 25);">
-                                                                            <p><%= address.building %>, <%= address.street %>, <%= address.city %>, <%= address.country %>, <%= address.postalCode %></p>
-                                                                        </div>
-                                                                    </div>
-                                                                </label>
-                                                            <% }) %>
-                                                        <% } else { %>
-                                                            <p>No addresses available. Please add a new address.</p>
-                                                        <% } %>
-                                                    </div>
-                                                    <!-- Change Button -->
-                                                    <div class="mt-3">
-                                                        <a href="/userprofile" class="btn btn-success">Change</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                            </li>
-                            <li class="checkout-item">
-                                <div class="avatar checkout-icon p-1">
-                                    <div class="avatar-title rounded-circle bg-success">
-                                        <i class="bx bxs-wallet-alt text-white font-size-20"></i>
-                                    </div>
-                                </div>
-                                <div class="feed-item-list">
-                                    <div>
-                                        <h5 class="font-size-14 mb-3">Payment method :</h5>
-    <div class="row">
-        <div class="col-lg-3 col-sm-6" >
-            <label class="card-radio-label">
-                <input type="radio" name="paymentMethod" value="Credit Card" class="card-radio-input" required >
-                <span class="card-radio py-3 text-center text-truncate">
-                    <i class="bx bx-credit-card d-block h2 mb-3"></i>
-                    Credit / Debit Card
-                </span>
-            </label>
-        </div>
 
-        <div class="col-lg-3 col-sm-6">
-            <label class="card-radio-label">
-                <input type="radio" name="paymentMethod" value="Paypal" class="card-radio-input" required>
-                <span class="card-radio py-3 text-center text-truncate">
-                    <i class="bx bxl-paypal d-block h2 mb-3"></i>
-                    Paypal
-                </span>
-            </label>
-        </div>
 
-        <div class="col-lg-3 col-sm-6">
-            <label class="card-radio-label">
-                <input type="radio" name="paymentMethod" value="Cash on Delivery" class="card-radio-input" required checked>
-                <span class="card-radio py-3 text-center text-truncate">
-                    <i class="bx bx-money d-block h2 mb-3"></i>
-                    Cash on Delivery
-                </span>
-            </label>
-        </div>
-    </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ol>
-                        <div class="row my-4">
-                            <div class="col">
-                                <a href="/cart" class="btn btn-success">
-                                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
-                                </a>
-                            </div>
-                            <div class="col">
-                                <div class="text-end mt-2 mt-sm-0">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="mdi mdi-cart-outline me-1"></i> Proceed
-                                    </button>
-                                </div>
-                            </div>
+
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <div class="container checkout-container">
+        <div class="checkout-wrapper">
+            <!-- Order Summary Section -->
+            <div class="order-summary mb-4">
+                <div class="card" style="border-color: rgb(80, 141, 78);">
+                    <div class="card-body">
+                        <!-- Order Summary Header -->
+                        <div class="p-3 mb-3">
+                            <h5 class="font-size-16 mb-0" style="color: rgb(26, 83, 25);">Order Summary
+                                <span class="float-end ms-2" style="color: rgb(26, 83, 25);">#MN0124</span>
+                            </h5>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Order Summary Section -->
-        <div class="col-xl-5">
-            <div class="card checkout-order-summary">
-                <div class="card-body">
-                    <div class="p-3 bg-light mb-3">
-                        <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2">#MN0124</span></h5>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-centered mb-0 table-nowrap me-3">
-                            <thead>
-                                <tr>
-                                    <th style="width: 110px;">Product</th>
-                                    <th>Product Desc</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% cartDetails.items.forEach(item => { %>
+    
+                        <!-- Order Summary Table -->
+                        <div class="table-responsive">
+                            <table class="table table-centered mb-0 table-nowrap">
+                                <thead>
                                     <tr>
-                                        <th><img src="<%= item.productImage %>" alt="<%= item.productId.name %>" class="avatar-lg rounded"></th>
+                                        <th style="width: 110px;">Product</th>
+                                        <th>Product Desc</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cartDetails.items.forEach(item => { %>
+                                    <tr>
+                                        <th>
+                                            <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" class="avatar-lg rounded" style="max-width: 100px; height: 100px; object-fit: cover;">
+                                        </th>
                                         <td>
                                             <h5 class="font-size-16 text-truncate"><%= item.productId.name %></h5>
                                             <p class="text-muted mb-0"><%= item.productPrice.toFixed(2) %> x <%= item.productCount %></p>
                                         </td>
                                         <td>$<%= (item.productPrice * item.productCount).toFixed(2) %></td>
                                     </tr>
-                                <% }) %>
-                                <tr class="bg-light">
-                                    <td colspan="2"><h5 class="font-size-14 m-0">Total:</h5></td>
+                                    <% }) %>
+                                    <tr class="bg-light">
+                                        <td colspan="2">
+                                            <h5 class="font-size-14 m-0">Total:</h5>
+                                        </td>
+                                        <td>$<%= cartDetails.items.reduce((total, item) => total + (item.productPrice * item.productCount), 0).toFixed(2) %></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+    
+                        <!-- Order Total Section -->
+                        <div class="p-3 mt-3">
+                            <h6 class="card-title mb-3">Order Total</h6>
+                            <div class="d-flex justify-content-between mb-1 small">
+                                <span>Subtotal</span> 
+                                <span id="payableAmount">$<%= cartDetails.items.reduce((total, item) => total + (item.productPrice * item.productCount), 0)%></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-1 small">
+                                <span>Coupon 
+                                    <input type="text" id="couponCodeInput" placeholder="Enter Coupon Code" class="form-control form-control-sm d-inline-block w-auto mx-2" />
+                                    <button class="btn btn-link btn-sm p-0" id="applyCouponButton" style="color: rgb(26, 83, 25);">Apply Coupon</button>
+                                    <button class="btn btn-sm d-none" id="removeCouponButton" title="Remove Coupon">
+                                        ✖
+                                    </button>
+                                </span>
+                            </div>
+    
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Checkout Form Section -->
+            <div class="checkout-details">
+                <div class="card border-0">
+                    <div class="card-body">
+                       
+                            <ol class="activity-checkout mb-0 px-4 mt-3">
+                                <!-- Address Section -->
+                                <li class="checkout-item">
+                                    <div class="avatar checkout-icon p-1">
+                                        <div class="avatar-title rounded-circle bg-success">
+                                            <i class="bx bxs-truck text-white font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item-list">
+                                        <div>
+                                            <h5 class="font-size-16 mb-1">Shipping Info</h5>
+                                            <form id="orderForm"  action="/place-order" method="POST">
+                                            <div class="mb-5">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div>
+                                                            <span class="fs-14 mb-4 d-block">Saved Address</span>
+                                                            <% if (addresses.length > 0) { %>
+                                                                <% addresses.forEach(address => { %>
+                                                                    <label class="card-radio-label mb-3">
+                                                                        <input type="radio" name="address" class="card-radio-input" value="<%= address._id %>" required>
+                                                                        <div class="card-radio p-3" data-address-id="<%= address._id %>">
+                                                                            <div style="color:rgb(26, 83, 25);">
+                                                                                <p><%= address.building %>, <%= address.street %>, <%= address.city %>, <%= address.country %>, <%= address.postalCode %></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </label>
+                                                                <% }) %>
+                                                            <% } else { %>
+                                                                <p>No addresses available. Please add a new address.</p>
+                                                            <% } %>
+                                                        </div>
+                                                        
+                                                        <script>
+                                                            // Add click event listener to all address cards
+                                                            document.querySelectorAll('.card-radio-label').forEach(card => {
+                                                                card.addEventListener('click', function () {
+                                                                    // Remove active class from all cards
+                                                                    document.querySelectorAll('.card-radio').forEach(c => c.classList.remove('active'));
+                                                        
+                                                                    // Add active class to the clicked card
+                                                                    this.querySelector('.card-radio').classList.add('active');
+                                                                });
+                                                            });
+                                                        </script>
+                                                        
+                                                        <!-- Change Button -->
+                                                        <div class="mt-3">
+                                                            <a href="/userprofile" class="btn btn-success">Change</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                 
-                                    <td><%= cartDetails.items.reduce((total, item) => total + (item.productPrice * item.productCount), 0).toFixed(2) %></td>
-                               
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </div>
+                                </li>
+    
+                                <!-- Payment Method Section -->
+                                <li class="checkout-item">
+                                    <div class="avatar checkout-icon p-1">
+                                        <div class="avatar-title rounded-circle bg-success">
+                                            <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item-list">
+                                        <div>
+                                            <h5 class="font-size-14 mb-3">Payment method</h5>
+                                            <div class="row">
+                                                <div class="col-lg-4 col-sm-6 mb-3">
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" value="Wallet" class="card-radio-input"  required>
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-wallet d-block h2 mb-3"></i>
+                                                            Wallet
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-4 col-sm-6 mb-3">
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" value="Razorpay" class="card-radio-input" id="razorpayOption" required>
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-rupee d-block h2 mb-3"></i>
+                                                            Razorpay
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-4 col-sm-6 mb-3">
+                                                    <label class="card-radio-label">
+                                                        <input type="radio" name="paymentMethod" value="Cash on Delivery" class="card-radio-input" required checked>
+                                                        <span class="card-radio py-3 text-center text-truncate">
+                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            Cash on Delivery
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ol>
+                            <!-- Actions Section -->
+                            <div class="row my-4">
+                                <div class="col">
+                                    <a href="/cart" class="btn btn-success">
+                                        <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <div class="text-end mt-2 mt-sm-0">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="mdi mdi-cart-outline me-1"></i> Place Order
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Optional: Coupon Modal from original code -->
+    <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="couponList"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script>
-    // Add click event listener to all address cards
-document.querySelectorAll('.card-radio').forEach(card => {
-    card.addEventListener('click', function() {
-        // Remove active class from all cards
-        document.querySelectorAll('.card-radio').forEach(c => c.classList.remove('active'));
 
-        // Add active class to the clicked card
-        this.classList.add('active');
-    });
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+    $(document).ready(function () {
+        // When the "Show Coupon Code" button is clicked
+        $('#applyCouponButton').click(function () {
+            // Open the modal to show the coupon list
+            $('#couponModal').modal('show');
+
+            // Fetch coupon data from the server
+            $.ajax({
+                url: '/get-coupons', // Server route to fetch coupons
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        // Populate modal with coupon data
+                        let couponHTML = '';
+                        response.coupons.forEach(function (coupon) {
+                            couponHTML += `
+                                <div class="coupon-item mb-3">
+                                    <p><strong>Code:</strong> ${coupon.code}</p>
+                                    <p><strong>SAVE:</strong> $${coupon.discountValue}</p>
+                                    <p><strong>End Date:</strong> ${new Date(coupon.endDate).toLocaleDateString()}</p>
+                                    <p><strong>Status:</strong> ${coupon.isActive ? 'Active' : 'Inactive'}</p>
+                                    <button class="btn btn-success apply-coupon-btn" data-coupon-code="${coupon.code}" style="color: white;">Apply Coupon</button>
+                                    <hr>
+                                </div>
+                            `;
+                        });
+                        $('#couponList').html(couponHTML);  // Assuming you have a div with id "couponList" to display the coupons
+                    } else {
+                        alert('Failed to load coupon data.');
+                    }
+                },
+                error: function () {
+                    alert('Error fetching coupon data.');
+                }
+            });
+        });
+
+        // Event listener for "Apply Coupon" buttons
+        $(document).on('click', '.apply-coupon-btn', function () {
+            // Get the coupon code from the button's data attribute
+            const couponCode = $(this).data('coupon-code');
+
+            // Update the placeholder of the coupon input field with the selected coupon code
+            $('#couponCodeInput').attr('placeholder', couponCode);
+
+            // Send a POST request to apply the coupon
+            $.ajax({
+                type: 'POST',
+                url: '/apply-coupon',
+                data: { couponCode: couponCode },
+                success: function (response) {
+                    if (response.success) {
+                        // Update the UI with the discount and new total
+                        $('#couponDiscount').text(`-$${response.discount.toFixed(2)}`);
+                        $('#payableAmount').text(`$${response.newTotal.toFixed(2)}`);
+
+                        // Show the close button
+                        $('#removeCouponButton').removeClass('d-none');
+                        alert('Coupon applied successfully!');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error applying coupon.');
+                }
+            });
+
+            // Optionally, close the modal after applying the coupon
+            $('#couponModal').modal('hide');
+        });
+
+        // Remove the applied coupon
+        $('#removeCouponButton').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/remove-coupon',
+                success: function (response) {
+                    if (response.success) {
+                        // Reset discount and payable amount
+                        $('#couponDiscount').text('-$0.00');
+                        $('#payableAmount').text(`$${response.originalTotal.toFixed(2)}`);
+
+                        // Hide the close button
+                        $('#removeCouponButton').addClass('d-none');
+
+                        alert('Coupon removed successfully!');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error removing coupon.');
+                }
+            });
+        });
+
 });
 
 </script>
-
-
-
-
-

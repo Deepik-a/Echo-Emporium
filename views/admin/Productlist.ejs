@@ -1,125 +1,33 @@
-<body>
-  <!-- Sidebar Start -->
-<div class="container-fluid pt-4 px-4">
-  <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-3">
-      <div class="sidebar pe-4 pb-3 bg-light">
-        <nav class="navbar navbar-light">
-          <a href="index.html" class="navbar-brand mx-4 mb-3">
-            <h3 class="text-primary">
-              <i class="fa fa-hashtag me-2"></i>Dashboard
-            </h3>
-          </a>
-          <div class="d-flex align-items-center ms-4 mb-4">
-            <div class="position-relative">
-              <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-            </div>
-            <div class="ms-3">
-              <h6 class="mb-0">DEEPIKA PS</h6>
-              <span>Admin</span>
-            </div>
-          </div>
-          <div class="navbar-nav w-100">
-            <a href="index.html" class="nav-item nav-link active">
-              <i class="fa fa-tachometer-alt me-2"></i>Dashboard
-            </a>
-            <div class="nav-item">
-              <a href="#" class="nav-link dropdown-toggle">
-                <i class="fa fa-laptop me-2"></i>Sales Report
-              </a>
-            </div>
+<%- include('sidebar') %>
+<style>
+    .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 18px;
+}
 
-            <!-- Category Section with Toggle -->
-            <div class="nav-item">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#CategoryMenu" id="categoryMenuLink">
-                <i class="fa fa-keyboard me-2"></i>Category
-              </a>
-              <div id="CategoryMenu" class="collapse">
-                <ul class="navbar-nav ps-3">
-                  <li class="nav-item">
-                    <a href="/admin/addCategory" class="nav-link">
-                      <i class="fa fa-plus me-2"></i>Add Category
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/admin/editCategory" class="nav-link">
-                      <i class="fa fa-list me-2"></i>Category List
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="nav-item">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#productMenu" id="productMenuLink">
-                  <i class="fa fa-keyboard me-2"></i>Products
-              </a>
-              <div id="productMenu" class="collapse">
-                  <ul class="navbar-nav ps-3">
-                      <li class="nav-item">
-                          <a href="/admin/addProduct" class="nav-link">
-                              <i class="fa fa-plus me-2"></i>Add Product
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="/admin/editProduct" class="nav-link">
-                              <i class="fa fa-list me-2"></i>Product List
-                          </a>
-                      </li>
-                  </ul>
-              </div>
-              </div>
+.pagination a, .pagination span {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+  font-size: 20px;
+}
 
-            <a href="/admin/users" class="nav-item nav-link">
-              <i class="fa fa-table me-2"></i>Customers
-            </a>
-            <a href="/admin/coupons" class="nav-item nav-link">
-              <i class="fa fa-chart-bar me-2"></i>Coupons
-            </a>
-            <a href="/admin/orders" class="nav-item nav-link">
-              <i class="fa fa-chart-bar me-2"></i>Orders
-            </a>
-            <a href="chart.html" class="nav-item nav-link">
-              <i class="fa fa-chart-bar me-2"></i>Popups
-            </a>
-            <a href="logout" class="nav-item nav-link">
-              <i class="fa fa-sign-out-alt me-2"></i>Logout
-            </a>
-          </div>
-        </nav>
-      </div>
-    </div>
+.pagination a:hover {
+  background-color: #f0f0f0;
+}
 
+.pagination span {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
 
-    <!-- Content Start -->
-<div class="content">
-
-  <!-- Navbar Start -->
-  <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-      <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-          <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-      </a>
-      <a href="#" class="sidebar-toggler flex-shrink-0">
-          <i class="fa fa-bars"></i>
-      </a>
-      
-      <div class="navbar-nav align-items-center ms-auto">
-         
-      
-      
-          <div class="nav-item dropdown">
-              <a href="#" class="nav-link">
-              
-                  <span class="d-none d-lg-inline-flex">Deepika </span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                  <a href="#" class="dropdown-item">My Profile</a>
-                  <!-- <a href="#" class="dropdown-item">Settings</a> -->
-                  <a href="#" class="dropdown-item">Log Out</a>
-              </div>
-          </div>
-      </div>
-  </nav>
+</style>
   <!-- Navbar End -->
   <div class="container mt-5">
     <h2 class="text-center mb-4">Product Management</h2>
@@ -149,13 +57,13 @@
       </thead>
       <tbody>
         <!-- Iterate through products and render each row -->
-        <% product.forEach((product, index) => { %>
+        <% products.forEach((product, index) => { %>
           <tr>
             <th scope="row"><%= index + 1 %></th>
             <td><%= product.name %></td>
             <td>
               <% if (product.imgArray && product.imgArray.length > 0) { %>
-                <img src="<%= product.imgArray[0] %>" class="product-image" alt="Product Image"  width="50">
+                <img src="<%= product.imgArray[0] %>" class="product-image" alt="Product Image" width="50">
               <% } else { %>
                 <img src="https://via.placeholder.com/50" class="product-image" alt="No Image">
               <% } %>
@@ -173,7 +81,11 @@
             </td>
             <td><%= product.description %></td>
             <td>
-              <button type="button" class="btn btn-warning btn-sm action-btn" data-toggle="modal" data-target="#editModal<%= product._id %>">Edit</button>
+<!-- Edit Button -->
+<a href="/admin/updateproduct/<%= product._id %>" class="btn btn-warning btn-sm action-btn">
+    Edit
+</a>
+
           
               <% if (product.isActive) { %>
                   <form action="/admin/unlistProduct/<%= product._id %>" method="POST" style="display: inline;">
@@ -185,68 +97,30 @@
                   </form>
               <% } %>
           
-              <!-- Edit Modal -->
-              <div class="modal fade" id="editModal<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                              <h5 class="modal-title" id="editModalLabel">Edit Product</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                              </button>
-                          </div>
-                          <form action="/admin/editProduct/<%= product._id %>" method="POST">
-                              <div class="modal-body">
-                                  <!-- Input fields for editing -->
-                                  <div class="form-group">
-                                      <label for="name">Product Name</label>
-                                      <input type="text" class="form-control" name="name" value="<%= product.name %>">
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="price">Price</label>
-                                      <input type="number" class="form-control" name="price" value="<%= product.price %>">
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="discount">Discount(%)</label>
-                                    <input type="number" class="form-control" id="discount" name="discount" value="<%= product.discount %>">
-                                </div>
-                                  <div class="form-group">
-                                      <label for="stock">Stock</label>
-                                      <input type="number" class="form-control" name="stock" value="<%= product.stock %>">
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="category">Category</label>
-                                      <select class="form-control" id="category" name="category" required>
-                                          <% categories.forEach(function(category) { %>
-                                              <option value="<%= category.name %>"><%= category.name %></option>
-                                          <% }); %>
-                                      </select>
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="description">Product Description</label>
-                                      <textarea class="form-control" name="description"><%= product.description %></textarea>
-                                  </div>
-                              </div>
-                              <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-primary">Update</button>
-                              </div>
-                          </form>
-                      </div>
-                  </div>
-              </div>
-          </td>
-          
+        
+            </td>
           </tr>
         <% }); %>
       </tbody>
     </table>
   </div>
 
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-
-
+ <!-- Pagination -->
+<div class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>">Previous</a>
+    <% } %>
+  
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <% if (i === currentPage) { %>
+        <span><%= i %></span>
+      <% } else { %>
+        <a href="?page=<%= i %>"><%= i %></a>
+      <% } %>
+    <% } %>
+  
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>">Next</a>
+    <% } %>
+  </div>
+  

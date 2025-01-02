@@ -15,6 +15,10 @@ const couponSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    maxDiscountAmount: {  // New field to limit max discount for percentage-based coupons
+        type: Number,
+        default: 0  // Default to 0, meaning no limit unless specified
+    },
     minimumOrderAmount: {
         type: Number,
         default: 0
@@ -27,6 +31,10 @@ const couponSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    usageCount:{
+        type:Number,
+        required:true
+        },
     isActive: {
         type: Boolean,
         default: true
@@ -34,3 +42,4 @@ const couponSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('Coupon', couponSchema);
+

@@ -72,8 +72,11 @@ const port=process.env.PORT || 3000
 
 app.use('/',userRoutes)
 app.use('/admin',adminRoutes)
+app.get('*',(req,res) =>{
+  res.render('user/404')
+})
 // app.get('/',(req,res)=>{
-//   res.render("admin/offer")
+//   res.render("user/hloo")
 // })
 
 

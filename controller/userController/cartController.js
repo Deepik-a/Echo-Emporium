@@ -1,20 +1,105 @@
 const Cart = require('../../model/cartSchema');
 const Product = require('../../model/productSchema');
 const User = require('../../model/userSchema');
-
+const offerModel = require('../../model/offerSchema'); // Update the path as necessary
 
 const mongoose = require('mongoose'); // Ensure mongoose is required
 
+const findOffer = async (cart) => {
+    if (!cart || !Array.isArray(cart.items)) {
+        console.error("findOffer: 'cart' or 'cart.items' is invalid", cart);
+        return { cartItems: [] };
+    }
+
+    const currentDate = new Date(); // Use Date object for comparisons
+
+    // Process each cart item
+    const cartItems = await Promise.all(
+        cart.items.map(async (item) => {
+            // Fetch product details for the item
+            const product = await Product.findById(item.productId).populate('category');
+            if (!product) {
+                console.error(`Product with ID ${item.productId} not found`);
+                return { ...item.toObject(), offers: [] };
+            }
+
+            const categoryId = product.category?._id?.toString(); // Extract category ID
+
+            // Fetch applicable offers
+            const offers = await offerModel.find({
+                $and: [
+                    { isActive: true },
+                    { startDate: { $lte: currentDate } },
+                    { endDate: { $gte: currentDate } },
+                    {
+                        $or: [
+                            { applicableProduct: item.productId },
+                            { applicableCategory: categoryId }, // Use category ID here
+                        ]
+                    }
+                ]
+            });
+
+            console.log("Fetched offers for product:", offers);
+            if (offers.length === 0) {
+                console.log("No valid offers found for product:", item.productId);
+            }
+
+            return {
+                ...item.toObject(),
+                product, // Attach full product details
+                offers,  // Attach applicable offers
+            };
+        })
+    );
+
+   
+
+    // Calculate discounts for each item
+    cartItems.forEach((item) => {
+        if (item.offers.length > 0 && item.product.discount <= 50) {
+            // Prioritize product offer over category offer
+            const productOffer = item.offers.find((offer) => offer.offerType === 'products');
+            const categoryOffer = item.offers.find((offer) => offer.offerType === 'Category');
+
+            console.log("Product offer:", productOffer, "Category offer:", categoryOffer);
+
+            // Determine the discount percentage
+            const discount = productOffer
+                ? productOffer.discountPercentage
+                : categoryOffer
+                ? categoryOffer.discountPercentage
+                : 0;
+
+            // Calculate the offer amount
+            const offerAmount = Math.round((item.product.price * discount) / 100);
+
+            // Update discountPrice for the product
+            item.product.finalPrice =
+                item.product.finalPrice !== undefined
+                    ? item.product.finalPrice - offerAmount
+                    : item.product.price - offerAmount;
+
+          
+        } else {
+            // Clear offers if no valid offer applies
+            item.offers = [];
+        }
+    });
+
+    return { cartItems };
+};
+
+
 const addToCart = async (req, res) => {
+    console.log("Entered addToCart");
     const userId = req.session.user;
     if (!userId) {
         res.locals.alertMessage = "User is not logged in, please log in again.";
-        // return res.render('user/cart', { cart: [] });
         return res.redirect('/cart');
     }
 
     const productId = req.params.id;
-    const productPrice = parseFloat(req.params.finalPrice);
     const MAX_QUANTITY_LIMIT = 10; // Maximum limit per product
 
     try {
@@ -28,53 +113,67 @@ const addToCart = async (req, res) => {
         // Check if the product is out of stock
         if (product.stock <= 0) {
             res.locals.alertMessage = "Product is out of stock.";
-            //return res.render('user/cart', { cart: [] });
             return res.redirect('/cart');
         }
 
+        // Fetch or create the cart
         let cart = await Cart.findOne({ userId }).populate('items.productId');
 
         if (!cart) {
-            cart = new Cart({ userId, items: [], payableAmount: 0, totalPrice: 0 });
+            cart = new Cart({
+                userId,
+                items: [],
+                totalPrice: 0,
+            });
         }
 
+        // Find or add the item in the cart
         let cartItem = cart.items.find(item => item.productId.equals(product._id));
 
         if (cartItem) {
-            if (cartItem.productCount + 1 > product.stock || cartItem.productCount + 1 > MAX_QUANTITY_LIMIT) {
+            if (
+                cartItem.productCount + 1 > product.stock || 
+                cartItem.productCount + 1 > MAX_QUANTITY_LIMIT
+            ) {
                 res.locals.alertMessage = `Cannot add more than ${Math.min(product.stock, MAX_QUANTITY_LIMIT)} items to the cart.`;
-                //return res.render('user/cart', { cart });
                 return res.redirect('/cart');
             } else {
                 cartItem.productCount += 1;
             }
         } else {
-            if (1 > MAX_QUANTITY_LIMIT) {
-                res.locals.alertMessage = `Cannot add more than ${MAX_QUANTITY_LIMIT} items to the cart.`;
-                return res.render('user/cart', { cart });
-            }
             cart.items.push({
                 productId: product._id,
                 productCount: 1,
-                productPrice: productPrice,
-                productImage: product.imgArray[0] || '/path-to-default-image.jpg',
+                productPrice: product.finalPrice || product.price,
+                productImage: product.imgArray[0] || '/path-to-default-image.jpg'
             });
         }
 
-        // Recalculate total price and payable amount
-        cart.totalPrice = cart.items.reduce((total, item) => total + item.productCount * item.productPrice, 0);
-        cart.payableAmount = cart.totalPrice;
+        // Calculate offers for the cart
+        const { cartItems } = await findOffer(cart);
 
-      await cart.save();
-    
+        // Update the cart items with calculated offers and prices
+        cart.items = cartItems.map(item => ({
+            productId: item.product._id,
+            productCount: item.productCount,
+            productPrice: item.product.finalPrice || item.product.price,
+            productImage: item.product.imgArray[0] || '/path-to-default-image.jpg'
+        }));
 
-        // return res.render('user/cart', { cart });
+       cart.totalPrice = cart.items.reduce((total, item) => total + (item.productPrice * item.productCount),0);
+        // Save the cart to the database
+        await cart.save();
+
         return res.redirect('/cart');
     } catch (error) {
         console.error('Error adding to cart:', error.message);
         return res.status(500).send('Server Error');
     }
 };
+
+
+
+
 
 
 
@@ -120,10 +219,9 @@ const removeFromCart = async (req, res) => {
 
         // Filter out the product to remove it from the cart
         cart.items = cart.items.filter(item => item.productId.toString() !== productId);
+        console.log(cart.items);
        
-        // Update total price and payable amount
-        cart.totalPrice = cart.items.reduce((total, item) => total + item.productCount * item.productPrice, 0);
-        cart.payableAmount = cart.totalPrice;
+        cart.totalPrice = cart.items.reduce((total, item) => total + (item.productPrice * item.productCount),0);
         await cart.save(); // Save the updated cart
         res.redirect('/cart');
     } catch (error) {
@@ -133,76 +231,6 @@ const removeFromCart = async (req, res) => {
 };
 
 
-//     console.log("updateCartQuantity ")
-//     const productId = req.params.id;
-//     console.log("productId",productId)
-//     const newQuantity = parseInt(req.body.productCount, 10);
-//     console.log("req.body.productCount ",req.body.productCount)
-//     console.log("newQuantity ",newQuantity )
-//     const userId = req.session.user;
-//     console.log("userId ",userId)
-//     const MAX_QUANTITY_LIMIT = 10; // Maximum limit per product
-
-//     try {
-//         const cart = await Cart.findOne({ userId }).populate('items.productId');
-//         if (!cart) {
-//             return res.json({
-//                 success: false,
-//                 message: 'Cart not found.',
-//             });
-//         }
-
-//         const cartItem = cart.items.find(item => item.productId._id.toString() === productId);
-//         if (!cartItem) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Product not found in cart.',
-//             });
-//         }
-
-//         // Fetch product details to check stock availability
-//         const product = await Product.findById(productId);
-//         if (!product) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'Product not found.',
-//             });
-//         }
-//         console.log("product ",product )
-
-//         // Check if the new quantity exceeds available stock or the maximum quantity limit
-//         if (newQuantity > product.stock || newQuantity > MAX_QUANTITY_LIMIT) {
-//             return res.json({
-//                 success: false,
-//                 message: `You can only add up to ${Math.min(product.stock, MAX_QUANTITY_LIMIT)} items to your cart.`,
-//             });
-//         }
-
-
-//         console.log("product.stock ",product.stock )
-//         if (newQuantity > 0) {
-//             cartItem.productCount = newQuantity;
-//         } else {
-//             // If quantity is 0 or less, remove the item from the cart
-//             cart.items = cart.items.filter(item => item.productId._id.toString() !== productId);
-//         }
-
-//         // Recalculate total price and payable amount
-//         cart.totalPrice = cart.items.reduce((total, item) => total + item.productCount * item.productPrice, 0);
-//         console.log(" cart.totalPrice ", cart.totalPrice )
-//         cart.payableAmount = cart.totalPrice;
-
-//         await cart.save();
-
-//         res.json({ success: true }); // Successful update response
-//     } catch (error) {
-//         console.error('Error updating cart quantity:', error.message);
-//         res.status(500).json({
-//             success: false,
-//             message: 'Server Error',
-//         });
-//     }
-// };
 const increment = async (req, res) => {
     try {
         console.log("Increment function called");
@@ -257,6 +285,7 @@ const increment = async (req, res) => {
         // Calculate the updated total price
         const updatedPrice = cart.items[index].productPrice * cart.items[index].productCount;
 
+        cart.totalPrice = cart.items.reduce((total, item) => total + (item.productPrice * item.productCount),0);
         // Save the cart
         await cart.save();
 
@@ -295,6 +324,7 @@ const decrement = async (req, res) => {
             if (cart.items[index].productCount <= 0) {
                 cart.items[index].productCount = 1;
             }
+            cart.totalPrice = cart.items.reduce((total, item) => total + (item.productPrice * item.productCount),0);
             await cart.save();
             res.status(200).json({
                 success: true,
@@ -319,5 +349,6 @@ module.exports = {
     getCart,
     removeFromCart,
     increment,
-    decrement 
+    decrement,
+    findOffer 
 };

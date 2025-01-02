@@ -4,6 +4,10 @@ const Coupon = require('../../model/couponSchema');
 
 const getCoupons = async (req, res) => {
     const search = req.query.search || '';
+    const page = parseInt(req.query.page) || 1; // Get the current page from the query string (default to page 1)
+    const limit = 10; // Define the number of coupons per page
+    const skip = (page - 1) * limit; // Skip the previous pages' coupons
+
     try {
         if (req.params.id) {
             const coupon = await Coupon.findById(req.params.id);
@@ -12,43 +16,68 @@ const getCoupons = async (req, res) => {
             }
             return res.json(coupon);
         }
-        const coupons = await Coupon.find({code: { $regex: search, $options: 'i' }})
-         
 
-        const count = await Coupon.countDocuments({ code: { $regex: search, $options: 'i' } })
+        // Fetch the coupons with pagination and search filter
+        const coupons = await Coupon.find({ code: { $regex: search, $options: 'i' } })
+            .skip(skip)
+            .limit(limit);
 
+        // Get the total count of coupons for pagination
+        const count = await Coupon.countDocuments({ code: { $regex: search, $options: 'i' } });
 
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(count / limit);
 
-        res.render('admin/coupons', { coupons, title: 'Coupons' });
+        // Render the page with pagination data
+        res.render('admin/coupons', {
+            coupons,
+            title: 'Coupons',
+            currentPage: page,
+            totalPages: totalPages,
+            search
+        });
     } catch (error) {
         console.log(`Error while rendering coupon page: ${error}`);
         res.status(500).json({ message: 'Error fetching coupon data' });
     }
 };
+
 //--------------------------------- Add a new coupon -----------------------------
 
 const addCoupon = async (req, res) => {
-    const { code, discountType, discountValue, startDate, endDate, minimumOrderAmount } = req.body;
-
-    if (!code || !discountType || !discountValue || !startDate || !endDate || !minimumOrderAmount) {
+    console.log("enterredvadd coupon")
+    const { code, discountType, discountValue, maxDiscountAmount, startDate, endDate, minimumOrderAmount,usageCount } = req.body;
+console.log(req.body,"req.body of add coupon ")
+    // Validation: Check if all required fields are present
+    if (!code || !discountType || !discountValue || !startDate || !endDate || !minimumOrderAmount ||!usageCount) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Validation: Ensure maxDiscountAmount is provided for Percentage discount type
+    if (discountType === 'Percentage' && (maxDiscountAmount === undefined || maxDiscountAmount <= 0)) {
+        return res.status(400).json({ message: 'For percentage discounts, maxDiscountAmount must be greater than 0' });
+    }
+
     try {
+        // Check if coupon code already exists
         const existingCoupon = await Coupon.findOne({ code });
         if (existingCoupon) {
             return res.status(400).json({ message: 'Coupon code already exists' });
         }
 
+        // Create a new coupon with the provided data
         const newCoupon = new Coupon({
             code,
             discountType,
             discountValue,
+            maxDiscountAmount,  // Save maxDiscountAmount for percentage-based coupons
             startDate,
             endDate,
-            minimumOrderAmount
+            minimumOrderAmount,
+            usageCount
         });
 
+        // Save the new coupon
         await newCoupon.save();
         res.json({ message: 'Coupon added successfully' });
     } catch (error) {
@@ -58,16 +87,17 @@ const addCoupon = async (req, res) => {
 };
 
 
+
 //------------------------------------- Edit a coupon ----------------------------
 
 const editCoupon = async (req, res) => {
-    const { id, code, discountType, discountValue, startDate, endDate, minimumOrderAmount } = req.body;
-    if (!id || !code || !discountType || !discountValue || !startDate || !endDate || minimumOrderAmount === undefined) {
+    const { id, code, discountType, discountValue, startDate, endDate, minimumOrderAmount,usageCount } = req.body;
+    if (!id || !code || !discountType || !discountValue || !startDate || !endDate || !minimumOrderAmount || !usageCount === undefined) {
         return res.status(400).json({ message: 'All fields are required' });
     }
     try {
         const updatedCoupon = await Coupon.findByIdAndUpdate(
-            id, { code, discountType, discountValue, startDate, endDate, minimumOrderAmount }, { new: true }
+            id, { code, discountType, discountValue, startDate, endDate, minimumOrderAmount,usageCount }, { new: true }
         );
         if (!updatedCoupon) {
             return res.status(404).json({ message: 'Coupon not found' });

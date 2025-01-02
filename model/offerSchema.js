@@ -1,24 +1,17 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
-    offerType:{
-        type: String,
-        enum: ['product','category'],
-        required: true,
-    },
-    referenceId: {
-        type: mongoose.Schema.Types.ObjectId,
-        refPath: 'offerType',
-        required: true,
-    },
-    discountPercent:{
-        type: Number,
-        required: true,
-    },
-    isActive:{
-        type: Boolean,
-        default: true,
-    }
-},{timestamps: true})
 
-module.exports = mongoose.model('offer',schema)
+const offerSchema = new mongoose.Schema({
+    title: { type: String },
+    discountPercentage: { type: Number,  min: 0, max: 100 },
+    applicableProduct: { type: mongoose.Schema.Types.ObjectId, ref: 'products'},
+    applicableCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'Category'},
+    offerType: { type: String, enum: ['products', 'Category'] },
+    startDate: { type: Date},
+    endDate: { type: Date},
+    isActive: { type: Boolean }
+}, { timestamps: true });
+
+module.exports = mongoose.model('Offer', offerSchema);
+
+

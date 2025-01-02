@@ -1,5 +1,7 @@
 const Order = require('../../model/orderSchema'); // Assuming you have an Order model
 const Product = require('../../model/productSchema'); // Assuming you have a Product model for stock management
+const mongoose = require('mongoose');
+
 
 
 
@@ -17,20 +19,73 @@ const listOrders = async (req, res) => {
 };
 
 // Change order status
-const changeOrderStatus = async (req, res) => {
-    const { orderId, status } = req.body;
+const changeProductStatus = async (req, res) => {
+    const { orderId, productId, status } = req.body;
+
     try {
-        const order = await Order.findById(orderId);
-        if (order) {
-            order.status = status; // Update status (e.g., 'Pending', 'Shipped', etc.)
-            await order.save();
-            res.redirect('/admin/orders');
-        } else {
-            res.status(404).send('Order not found');
+        // Define status transitions
+        const statusTransitions = {
+            'Pending': ['Shipped', 'Confirmed'],
+            'Confirmed': ['Delivered', 'Cancelled'],
+            'Shipped': ['Delivered', 'Returned'],
+            'Delivered': [],
+            'Cancelled': [],
+            'Returned': []
+        };
+
+        // Find the order and populate product details to ensure full data
+        const order = await Order.findById(orderId).populate('items.productId');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
         }
+
+        // Find the specific item in the order
+        const itemIndex = order.items.findIndex(item => 
+            item.productId._id.toString() === productId
+        );
+
+        // Validate item exists
+        if (itemIndex === -1) {
+            return res.status(404).json({ message: 'Product not found in order' });
+        }
+
+        // Current product item
+        const currentItem = order.items[itemIndex];
+
+        // Check if the status transition is valid
+        const validTransitions = statusTransitions[currentItem.status] || [];
+        if (!validTransitions.includes(status)) {
+            return res.status(400).json({ 
+                message: `Invalid status transition from ${currentItem.status} to ${status}` 
+            });
+        }
+
+        // Update the individual product status
+        currentItem.status = status;
+
+        // Optional: Update overall order status based on individual product statuses
+        const allStatuses = order.items.map(item => item.status);
+        const isAllDelivered = allStatuses.every(s => s === 'Delivered');
+        const isAllCancelled = allStatuses.every(s => s === 'Cancelled');
+
+        if (isAllDelivered) {
+            order.status = 'Delivered';
+        } else if (isAllCancelled) {
+            order.status = 'Cancelled';
+        }
+
+        // Save the updated order
+        await order.save();
+
+        // Redirect or send response
+        res.redirect('/admin/orders');
     } catch (error) {
-        console.error('Error changing order status:', error);
-        res.status(500).send('Error changing order status');
+        console.error('Error updating product status:', error);
+        res.status(500).json({ 
+            message: 'Error updating product status', 
+            error: error.message 
+        });
     }
 };
 
@@ -49,7 +104,7 @@ const cancelOrder = async (req, res) => {
             order.isCancel = true; // Set the order as canceled
             order.status = 'Cancelled'; // Update status to 'Cancelled'
             await order.save();
-            res.redirect('/admin/orders');
+            res.redirect(`/admin/orders/${orderId}`);
         } else {
             res.status(404).send('Order not found');
         }
@@ -93,11 +148,38 @@ const updateStock = async (req, res) => {
 
 
 
+// Controller to view order details
+const viewOrderDetails = async (req, res) => {
+    const { orderId } = req.params;
+
+    try {
+        const order = await Order.findById(orderId).populate('userId', 'name email') // Get user details
+            .populate({
+                path: 'items.productId',
+                select: 'name price image' // Adjust these fields based on your product schema
+            });
+
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        // Render the order details EJS template
+        res.render('admin/orderDetail', { order });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+};
+
+
+
+
 
 module.exports={
     listOrders,
-    changeOrderStatus,
+    changeProductStatus,
     cancelOrder,
     listInventory ,
-    updateStock 
+    updateStock ,
+    viewOrderDetails
 }

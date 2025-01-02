@@ -21,9 +21,10 @@ const home = async (req, res) => {
         return res.redirect('/account-blocked'); // Redirect to the blocked account page
       }
     }
-    const product = await productSchema.find({ isActive : true })    
+    const products = await productSchema.find({  isActive: true })
+       
     const categories=await categorySchema.find({isDeleted:false})
-    res.render('user/home', { categories, product, user: req.session.user})
+    res.render('user/home', { categories, products, user: req.session.user})
   } catch (error) {
     console.log(`error while rendering home ${error}`)
   }

@@ -19,36 +19,38 @@ const forgotPassword = (req, res) => {
 
 //------------------------------------- Forget ---------------------------------------
 
-
 const forgotPasswordPost = async (req, res) => {
     try {
-        const checkEmail = await userSchema.findOne({ email: req.body.email });
+        const email = req.body.email;
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email syntax' });
+        }
+
+        // Check if email exists in the database
+        const checkEmail = await userSchema.findOne({ email: email });
 
         if (!checkEmail) {
-            req.flash('error', `We couldn't find your details, Please Register.`);
-            return res.redirect('/signup');
+            return res.status(404).json({ error: 'Email not registered' });
         }
 
-        if (checkEmail.isBlocked) {
-            req.flash('error', 'Access to this account has been restricted By Admin.');
-            return res.redirect('/login');
-        }
-
+        // Proceed with OTP generation
         const otp = generateOTP();
+        sendOTP(email, otp);
 
-        sendOTP(req.body.email, otp);
-
-        req.session.email = req.body.email;
+        req.session.email = email;
         req.session.otp = otp;
-        req.session.otpExpireTime = Date.now()
+        req.session.otpExpireTime = Date.now();
 
-        res.redirect('/forgotPasswordOtp');
+        res.status(200).json({ success: 'OTP sent successfully' });
     } catch (err) {
-        console.log(`Error during forgot password page ${err}`);
-        req.flash('error', 'An error occurred. Please try again later.');
-        res.redirect('/forgotPassword');
+        console.log(`Error during forgot password page: ${err}`);
+        res.status(500).json({ error: 'An error occurred. Please try again later.' });
     }
 };
+
 
 
 //--------------------------------- Otp page is render --------------------------------
@@ -87,19 +89,50 @@ const forgotPasswordOtpPost = async (req, res) => {
 
 const resetPasswordPost = async (req, res) => {
     try {
-        const password = await bcrypt.hash(req.body.password, 10)
-        const update = await userSchema.updateOne({ email: req.session.email },{ password: password })
-        if (update) {
-            req.flash('success', 'Password updated successfully')
-            res.redirect('/login')
+        const { newPassword, confirmPassword } = req.body;
+        console.log('New Password:', newPassword);  // Log for debugging
+        console.log('Confirm Password:', confirmPassword);  // Log for debugging
+
+        // Check if passwords match
+        if (newPassword !== confirmPassword) {
+            req.flash('error', 'Passwords do not match');
+            return res.redirect('/forgotpasswordotp');
+        }
+
+        // Ensure password is provided
+        if (!newPassword) {
+            req.flash('error', 'Password is required');
+            return res.redirect('/forgotpasswordotp');
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        console.log('Hashed password:', hashedPassword);
+
+        // Update the password in the database
+        const update = await userSchema.updateOne(
+            { email: req.session.email },
+            { $set: { password: hashedPassword } }
+        );
+
+        console.log('Update result:', update);
+
+        if (update.modifiedCount > 0) {
+            req.flash('success', 'Password updated successfully');
+            return res.redirect('/login');
         } else {
-        req.flash('error', 'Error while password update')
-        res.redirect('/login')
+            req.flash('error', 'Error while updating password');
+            return res.redirect('/forgotpasswordotp');
         }
     } catch (error) {
-        console.log(`error while reset password post ${error}`)
+        console.error(`Error while resetting password: ${error}`);
+        req.flash('error', 'Something went wrong. Please try again.');
+        return res.redirect('/forgotpasswordotp');
     }
-}
+};
+
+
+
 
 
 //----------------------------------- OTP Resend -----------------------------------
